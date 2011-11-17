@@ -33,14 +33,14 @@
 						Reader
 					</g:header>
 					<g:DockLayoutPanel ui:field="readerPanel">
-						<g:north size="53">
+						<g:north size="60">
 							<my:FilterBox ui:field="readerBox" />
 						</g:north>
 						<g:center>
 							<my:Reader ui:field="reader" />
 						</g:center>
 						<g:east size="200">
-							<my:TossupInfoPanel />
+							<my:AnswerInfoPanel ui:field="answerInfoPanel" />
 						</g:east>
 						<g:west size="200">
 							<my:TossupInfoPanel ui:field="tossupInfoPanel" />

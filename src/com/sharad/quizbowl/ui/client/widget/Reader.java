@@ -16,19 +16,23 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEvent;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEventHandler;
+import com.sharad.quizbowl.ui.client.widget.event.NewTossupEvent;
+import com.sharad.quizbowl.ui.client.widget.event.NewTossupEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEventHandler;
 import com.smartgwt.client.widgets.Slider;
 
 public class Reader extends Composite {
-
 	private static final String ACCEPT_DELIMITER = "|";
 	private static ReaderUiBinder uiBinder = GWT.create(ReaderUiBinder.class);
 	@UiField
@@ -40,16 +44,18 @@ public class Reader extends Composite {
 	private HandlerManager handlerManager;
 	@UiField(provided = true)
 	public Slider speedSlider;
-	private boolean reading = false, buzzed = false;
-	private Timer readTimer;
+	private boolean reading = false, buzzed = false, idle = true,
+			canAnswer = false;
 	@UiField
-	public FocusWidget buzzButton;
+	public Button buzzButton;
 	@UiField
 	public TextBox answerBox;
 	@UiField
 	public VerticalPanel mainPanel;
-	private Timer buzzTimer;
+	private Timer readTimer, waitTimer;
 	public Tossup currentTossup;
+	public static final String BUZZ_TEXT = "Buzz";
+	public static final String CONTINUE_TEXT = "Continue";
 
 	interface ReaderUiBinder extends UiBinder<Widget, Reader> {
 
@@ -59,24 +65,64 @@ public class Reader extends Composite {
 		this.tossups = tossups;
 		count = 0;
 		if (tossups.size() > 0) {
-			read(tossups.get(0));
+			read();
 		}
 	}
 
-	public void read(Tossup tossup) {
-		currentTossup = tossup;
+	public void getNewTossup() {
+		idle = false;
+		if (tossups == null || count == tossups.size()) {
+			NewTossupEvent event = new NewTossupEvent(1);
+			fireEvent(event);
+		} else {
+			read();
+		}
+	}
+
+	public void showAnswer(boolean correct) {
+		waitTimer.cancel();
+		buzzed = false;
+		readArea.setFocus(true);
+		AnswerInfoEvent e = new AnswerInfoEvent(new AnswerInfo(
+				correct ? checkAnswer(answerBox.getText()) : correct,
+				currentTossup.getAnswer()));
+		answerBox.setText("");
+		fireEvent(e);
+		readArea.setText(currentTossup.getQuestion() + "\n\nANSWER: "
+				+ currentTossup.getAnswer());
+		idle = true;
+		buzzButton.setVisible(true);
+		buzzButton.setText(CONTINUE_TEXT);
+		answerBox.setVisible(false);
+		canAnswer = false;
+	}
+
+	public void read() {
+		currentTossup = tossups.get(count);
 		readArea.setText("");
 		reading = true;
 		wordCount = 0;
 
 		final String[] split = currentTossup.getQuestion().split(" ");
+		waitTimer = new Timer() {
+
+			@Override
+			public void run() {
+				showAnswer(false);
+			}
+
+		};
 		readTimer = new Timer() {
 
 			@Override
 			public void run() {
 				if (!buzzed) {
+					buzzButton.setText(BUZZ_TEXT);
+
 					if (wordCount > split.length) {
 						reading = false;
+						waitTimer.schedule(5000);
+
 					} else {
 						StringBuilder sb = new StringBuilder();
 						String delimiter = "";
@@ -95,12 +141,12 @@ public class Reader extends Composite {
 
 		};
 		readTimer.schedule(convertSliderToSleed(speedSlider.getValue()));
-		ReadEvent event = new ReadEvent(tossup);
+		ReadEvent event = new ReadEvent(currentTossup);
 		fireEvent(event);
 	}
 
 	private int convertSliderToSleed(float value) {
-		return (int) (1 / value * 1000);
+		return (int) (2019.19 - 19.1919 * value);
 	}
 
 	public Reader() {
@@ -109,6 +155,7 @@ public class Reader extends Composite {
 		speedSlider.setMinValue(1);
 		speedSlider.setMaxValue(100);
 		speedSlider.setNumValues(99);
+		speedSlider.setValue(79);
 		handlerManager = new HandlerManager(this);
 		initWidget(uiBinder.createAndBindUi(this));
 		answerBox.setVisible(false);
@@ -116,14 +163,9 @@ public class Reader extends Composite {
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if (buzzed) {
+				if (buzzed && canAnswer) {
 					if (event.getNativeKeyCode() == 13) {
-						buzzTimer.cancel();
-						buzzed = false;
-						readArea.setFocus(true);
-						checkAnswer(answerBox.getText());
-						answerBox.setText("");
-
+						showAnswer(true);
 					}
 				}
 
@@ -135,8 +177,16 @@ public class Reader extends Composite {
 
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if (event.getNativeKeyCode() == 32) {
-					buzz();
+				if (idle) {
+					if (event.getNativeKeyCode() == 13
+							|| event.getNativeKeyCode() == 32) {
+						count++;
+						getNewTossup();
+					}
+				} else {
+					if (reading && (event.getNativeKeyCode() == 32)) {
+						buzz();
+					}
 				}
 
 			}
@@ -145,23 +195,22 @@ public class Reader extends Composite {
 		buzzButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				buzz();
+				if (!idle)
+					buzz();
 			}
 		});
 
 	}
 
 	private void buzz() {
+		canAnswer = true;
 		buzzed = true;
 		buzzButton.setVisible(false);
 		answerBox.setVisible(true);
-		buzzTimer = new Timer() {
-			@Override
-			public void run() {
-				buzzed = false;
-			}
-		};
 		answerBox.setFocus(true);
+		answerBox.setAlignment(TextAlignment.CENTER);
+		answerBox.setText("");
+		waitTimer.schedule(10000);
 	}
 
 	@Override
@@ -188,8 +237,21 @@ public class Reader extends Composite {
 			}
 
 			return correct;
+		} else {
+			return currentTossup.getAnswer().toLowerCase()
+					.contains(text.toLowerCase());
 		}
-		return false;
+		// return false;
 
+	}
+
+	public HandlerRegistration addNewTossupEventHandler(
+			NewTossupEventHandler handler) {
+		return handlerManager.addHandler(NewTossupEvent.TYPE, handler);
+	}
+
+	public HandlerRegistration addAnswerInfoEventHandler(
+			AnswerInfoEventHandler handler) {
+		return handlerManager.addHandler(AnswerInfoEvent.TYPE, handler);
 	}
 }

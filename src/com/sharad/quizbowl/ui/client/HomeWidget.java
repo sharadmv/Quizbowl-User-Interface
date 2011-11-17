@@ -28,16 +28,21 @@ import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
 import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
 import com.sharad.quizbowl.ui.client.util.Resources;
 import com.sharad.quizbowl.ui.client.util.guava.Joiner;
+import com.sharad.quizbowl.ui.client.widget.AnswerInfoPanel;
 import com.sharad.quizbowl.ui.client.widget.FilterBar;
 import com.sharad.quizbowl.ui.client.widget.FilterBox;
 import com.sharad.quizbowl.ui.client.widget.Reader;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch.Configuration;
 import com.sharad.quizbowl.ui.client.widget.TossupInfoPanel;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEvent;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.FilterResultEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterResultEventHandler;
+import com.sharad.quizbowl.ui.client.widget.event.NewTossupEvent;
+import com.sharad.quizbowl.ui.client.widget.event.NewTossupEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEventHandler;
 
@@ -67,6 +72,8 @@ public class HomeWidget extends Composite {
 	Reader reader;
 	@UiField
 	TossupInfoPanel tossupInfoPanel;
+	@UiField
+	AnswerInfoPanel answerInfoPanel;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
@@ -113,18 +120,36 @@ public class HomeWidget extends Composite {
 			}
 
 		});
+		reader.addAnswerInfoEventHandler(new AnswerInfoEventHandler() {
+
+			@Override
+			public void onAnswerInfoReceived(AnswerInfoEvent event) {
+				answerInfoPanel.loadAnswerInfo(event.getInfo());
+			}
+
+		});
+		reader.addNewTossupEventHandler(new NewTossupEventHandler() {
+
+			@Override
+			public void onNewTossup(NewTossupEvent event) {
+				readerBox.generate();
+			}
+
+		});
 		initWidget(main);
 
 	}
 
 	public void readTossups(HashMap<String, List<String>> params) {
-//		Window.alert(params.toString());
 		String parameters = "";
 		String delimiter = "";
 		for (String s : params.keySet()) {
 			if (params.get(s).size() != 0) {
-				parameters += delimiter + s + "="
-						+ URL.encodeQueryString((Joiner.on("|").join(params.get(s))));
+				parameters += delimiter
+						+ s
+						+ "="
+						+ URL.encodeQueryString((Joiner.on("|").join(params
+								.get(s))));
 				delimiter = "&";
 			}
 		}
@@ -152,14 +177,16 @@ public class HomeWidget extends Composite {
 	}
 
 	public void searchTossups(HashMap<String, List<String>> params) {
-//		Window.alert(params.toString());
 
 		String parameters = "";
 		String delimiter = "";
 		for (String s : params.keySet()) {
 			if (params.get(s).size() != 0) {
-				parameters += delimiter + s + "="
-						+ URL.encodeQueryString((Joiner.on("|").join(params.get(s))));
+				parameters += delimiter
+						+ s
+						+ "="
+						+ URL.encodeQueryString((Joiner.on("|").join(params
+								.get(s))));
 				delimiter = "&";
 			}
 		}
@@ -240,10 +267,12 @@ public class HomeWidget extends Composite {
 			if (config.equals(Configuration.HORIZONTAL)) {
 				RootLayoutPanel.get().setStyleName("nonSplashStyle");
 				horizontalPanel.add(simpleSearch);
+				simpleSearch.setStyleName("horizontalSearch");
 				horizontalPanel.setVisible(true);
 				horizontalPanel.setWidth("100%");
+				horizontalPanel.setHeight("100%");
 				centerPanel.setVisible(false);
-				searchPanel.addNorth(horizontalPanel, 53);
+				searchPanel.addNorth(horizontalPanel, 60);
 				searchPanel.addWest(filterBar, 200);
 			} else if (config.equals(Configuration.VERTICAL)) {
 				RootLayoutPanel.get().setStyleName("splashStyle");

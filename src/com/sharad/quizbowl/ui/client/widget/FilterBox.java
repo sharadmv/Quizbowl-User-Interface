@@ -111,23 +111,7 @@ public class FilterBox extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				HashMap<String, List<String>> parameters = new HashMap<String, List<String>>();
-				parameters.put("year", yearsBox.getItems());
-				parameters.put("tournament", tournamentsBox.getItems());
-				parameters.put("category", categoriesBox.getItems());
-				parameters.put("difficulty", difficultiesBox.getItems());
-				String fieldName = "answer";
-				if (conditionsBox.getItems().get(0).equals("Question"))
-					fieldName = "question";
-				else if (conditionsBox.getItems().get(0).equals("All"))
-					parameters.put("condition",
-							Arrays.asList(new String[] { "all" }));
-				parameters.put(fieldName, Arrays.asList(fieldItem
-						.getValueAsString() == null ? new String[] {}
-						: new String[] { fieldItem.getValueAsString() }));
-				FilterEvent e = new FilterEvent(parameters);
-				fireEvent(e);
-
+				generate();
 			}
 
 		});
@@ -146,6 +130,25 @@ public class FilterBox extends Composite {
 				HasVerticalAlignment.ALIGN_BOTTOM);
 		setStylePrimaryName("simpleSearchHorizontal");
 
+	}
+
+	public void generate() {
+		HashMap<String, List<String>> parameters = new HashMap<String, List<String>>();
+		parameters.put("year", yearsBox.getItems());
+		parameters.put("tournament", tournamentsBox.getItems());
+		parameters.put("category", categoriesBox.getItems());
+		parameters.put("difficulty", difficultiesBox.getItems());
+		String fieldName = "answer";
+		if (conditionsBox.getItems().get(0).equals("Question"))
+			fieldName = "question";
+		else if (conditionsBox.getItems().get(0).equals("All"))
+			parameters.put("condition", Arrays.asList(new String[] { "all" }));
+		parameters
+				.put(fieldName,
+						Arrays.asList(fieldItem.getValueAsString() == null ? new String[] {}
+								: new String[] { fieldItem.getValueAsString() }));
+		FilterEvent e = new FilterEvent(parameters);
+		fireEvent(e);
 	}
 
 	@Override
