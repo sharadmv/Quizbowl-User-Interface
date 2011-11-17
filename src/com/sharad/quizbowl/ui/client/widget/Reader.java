@@ -108,6 +108,7 @@ public class Reader extends Composite {
 
 			@Override
 			public void run() {
+				canAnswer = false;
 				showAnswer(false);
 			}
 
@@ -120,9 +121,8 @@ public class Reader extends Composite {
 					buzzButton.setText(BUZZ_TEXT);
 
 					if (wordCount > split.length) {
-						reading = false;
 						waitTimer.schedule(5000);
-
+						reading = false;
 					} else {
 						StringBuilder sb = new StringBuilder();
 						String delimiter = "";
@@ -141,6 +141,8 @@ public class Reader extends Composite {
 
 		};
 		readTimer.schedule(convertSliderToSleed(speedSlider.getValue()));
+		reading = true;
+		canAnswer = true;
 		ReadEvent event = new ReadEvent(currentTossup);
 		fireEvent(event);
 	}
@@ -184,7 +186,7 @@ public class Reader extends Composite {
 						getNewTossup();
 					}
 				} else {
-					if (reading && (event.getNativeKeyCode() == 32)) {
+					if (canAnswer && (event.getNativeKeyCode() == 32)) {
 						buzz();
 					}
 				}
