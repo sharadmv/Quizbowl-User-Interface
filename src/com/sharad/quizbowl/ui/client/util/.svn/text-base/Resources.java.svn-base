@@ -1,5 +1,0 @@
-package com.sharad.quizbowl.ui.client.util;
-
-public class Resources {
-	public static final String IMAGE_LOADING = "com.sharad.quizbowl.ui.QuizbowlUI/sc/skins/Enterprise/images/loadingSmall.gif";
-}
