@@ -174,17 +174,22 @@ public class Reader extends Composite {
 		return handlerManager.addHandler(ReadEvent.TYPE, readEventHandler);
 	}
 
-	public boolean checkAnswer(String text) {
-		if (text == "")
-			return false;
-		String[] acceptable = currentTossup.getAccept().split(ACCEPT_DELIMITER);
-		boolean correct = false;
-		for (int i = 0; i < acceptable.length; i++) {
-			if (text.equals(acceptable[i])) {
-				correct = true;
+	private boolean checkAnswer(String text) {
+		if (currentTossup.getAccept() != null) {
+			if (text == "")
+				return false;
+			String[] acceptable = currentTossup.getAccept().split(
+					ACCEPT_DELIMITER);
+			boolean correct = false;
+			for (int i = 0; i < acceptable.length; i++) {
+				if (text.equals(acceptable[i])) {
+					correct = true;
+				}
 			}
+
+			return correct;
 		}
-		return correct;
+		return false;
 
 	}
 }
