@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<!--                                                               -->
+<!-- Consider inlining CSS to reduce the number of requested files -->
+<link href='http://fonts.googleapis.com/css?family=Forum'
+	rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Actor'
+	rel='stylesheet' type='text/css'>
+<link type="text/css" rel="stylesheet"
+	href="http://www.geraldfong.com/QuizbowlUI.css">
+
+<!--                                           -->
+<!-- Any title is fine                         -->
+<!--                                           -->
+<title>Quizbowl Central</title>
+
+<!--                                           -->
+<!-- This script loads your compiled module.   -->
+<!-- If you add any GWT meta tags, they must   -->
+<!-- be added before this line.                -->
+<!--                                           -->
+<script language="javascript"
+	src="com.sharad.quizbowl.ui.QuizbowlUI/com.sharad.quizbowl.ui.QuizbowlUI.nocache.js"></script>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script
+	src="http://ec2-50-17-57-153.compute-1.amazonaws.com:8080/nowjs/now.js"></script>
+<script>
+	$(document).ready(function() {
+		now.receiveMessage = function(name, message) {
+			displayText(name + ": " + message);
+		}
+	});
+</script>
+</head>
+
+<!--                                           -->
+<!-- The body can have arbitrary html, or      -->
+<!-- we leave the body empty because we want   -->
+<!-- to create a completely dynamic ui         -->
+<!--                                           -->
+<body>
+
+	<!-- OPTIONAL: include this if you want history support -->
+	<iframe id="__gwt_historyFrame" style="width: 0; height: 0; border: 0"></iframe>
+
+</body>
+</html>

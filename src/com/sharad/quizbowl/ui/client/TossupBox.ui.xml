@@ -1,0 +1,12 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'>
+	<g:VerticalPanel>
+		<g:HorizontalPanel ui:field="labelPanel" width="100%">
+			<g:Label ui:field="tossupLabel" />
+		</g:HorizontalPanel>
+		<g:Label ui:field="tossupText" />
+		<g:Label ui:field="tossupAnswer" />
+
+	</g:VerticalPanel>
+</ui:UiBinder> 

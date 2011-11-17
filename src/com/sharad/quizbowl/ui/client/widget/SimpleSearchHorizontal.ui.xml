@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.important {
+			font-size: 20px;
+			margin-right: 5px;
+		}
+	</ui:style>
+
+	<g:HorizontalPanel>
+
+		<g:HorizontalPanel>
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:Label ui:field="title" />
+			</g:cell>
+
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:TextBox ui:field="searchBox" width="600px" styleName="{style.important}"></g:TextBox>
+			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+
+				<g:Button width="100px" ui:field="button">
+					<b>Submit</b>
+				</g:Button>
+			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:Image ui:field="loading"></g:Image>
+			</g:cell>
+		</g:HorizontalPanel>
+	</g:HorizontalPanel>
+
+</ui:UiBinder> 

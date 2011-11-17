@@ -1,0 +1,88 @@
+package com.sharad.quizbowl.ui.client;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArrayInteger;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.jsonp.client.JsonpRequestBuilder;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
+import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
+import com.sharad.quizbowl.ui.client.util.guava.Joiner;
+import com.sharad.quizbowl.ui.client.widget.FilterBox;
+import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
+import com.sharad.quizbowl.ui.client.widget.event.FilterEvent;
+import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
+
+public class HomeWidget extends Composite {
+
+	private static HomeWidgetUiBinder uiBinder = GWT
+			.create(HomeWidgetUiBinder.class);
+
+	interface HomeWidgetUiBinder extends UiBinder<Widget, HomeWidget> {
+	}
+
+	private JsArrayInteger years;
+	private JsArrayString tournaments, difficulties, categories;
+
+	@UiField(provided = true)
+	public SimpleSearch simpleSearch;
+
+	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
+			JsArrayString difficulties, JsArrayString categories) {
+		this.years = years;
+		this.tournaments = tournaments;
+		this.difficulties = difficulties;
+		this.categories = categories;
+		simpleSearch = new SimpleSearch();
+		
+		simpleSearch.addFilterEventHandler(new FilterEventHandler() {
+
+			@Override
+			public void onTossupsReceived(FilterEvent event) {
+				getTossups(event.getParameters());
+
+			}
+
+		});
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	public void getTossups(HashMap<String, List<String>> params) {
+		String parameters = "";
+		String delimiter = "";
+		for (String s : params.keySet()) {
+			if (params.get(s).size() != 0) {
+				parameters += delimiter + s + "="
+						+ Joiner.on("|").join(params.get(s));
+				delimiter = "&";
+			}
+		}
+		JsonpRequestBuilder tossupGrabber = new JsonpRequestBuilder();
+		tossupGrabber.requestObject(QuizbowlUI.SERVER_URL
+				+ "/query?alt=json-in-script&" + parameters,
+				new AsyncCallback<TossupsPackage>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+
+					}
+
+					@Override
+					public void onSuccess(TossupsPackage result) {
+						simpleSearch.getLoading().setVisible(false);
+						simpleSearch.setConfiguration(SimpleSearch.HORIZONTAL);
+						Window.alert(result.getTossups().get(0).getString());
+					}
+				});
+		simpleSearch.getLoading().setVisible(true);
+
+	}
+}

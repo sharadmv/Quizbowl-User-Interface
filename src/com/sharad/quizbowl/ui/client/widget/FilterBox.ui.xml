@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'
+	xmlns:sg='urn:import:com.smartgwt.client.widgets' xmlns:sgf='urn:import:com.smartgwt.client.widgets.form'>
+	<ui:style>
+		.horizontalPanel {
+			border-bottom-style: solid;
+			border-bottom-width: 2px;
+		}
+	</ui:style>
+	<g:HorizontalPanel width="100%" styleName="{style.horizontalPanel}">
+		<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_LEFT">
+			<g:HorizontalPanel>
+				<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_LEFT">
+					<g:Label ui:field="titleLabel" />
+				</g:cell>
+				<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_LEFT">
+					<g:HorizontalPanel ui:field="horizontalPanel">
+
+						<g:cell verticalAlignment="ALIGN_BOTTOM">
+							<my:CheckDropBox ui:field="yearsBox" />
+						</g:cell>
+						<g:cell verticalAlignment="ALIGN_BOTTOM">
+							<my:CheckDropBox ui:field="tournamentsBox" />
+						</g:cell>
+						<g:cell verticalAlignment="ALIGN_BOTTOM">
+							<my:CheckDropBox ui:field="difficultiesBox" />
+						</g:cell>
+						<g:cell verticalAlignment="ALIGN_BOTTOM">
+							<my:CheckDropBox ui:field="categoriesBox" />
+						</g:cell>
+						<g:cell verticalAlignment="ALIGN_BOTTOM">
+							<my:CheckDropBox ui:field="conditionsBox" />
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:HorizontalPanel>
+
+</ui:UiBinder> 

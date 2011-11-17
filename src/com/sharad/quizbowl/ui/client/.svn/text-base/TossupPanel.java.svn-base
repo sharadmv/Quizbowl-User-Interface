@@ -1,0 +1,29 @@
+package com.sharad.quizbowl.ui.client;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class TossupPanel extends Composite {
+	private static TossupPanelUiBinder uiBinder = GWT
+			.create(TossupPanelUiBinder.class);
+
+	interface TossupPanelUiBinder extends UiBinder<Widget, TossupPanel> {
+	}
+
+	@UiField
+	public HorizontalPanel toolbar;
+	@UiField
+	public VerticalPanel main;
+
+	public TossupPanel() {
+		main = new VerticalPanel();
+		toolbar = new HorizontalPanel();
+
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+}

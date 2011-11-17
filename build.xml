@@ -1,0 +1,98 @@
+<project name="QuizbowlUI" default="deploy" basedir=".">
+	<property name="project.name" value="QuizbowlUI" />
+	<property name="src.dir" location="src" />
+	<property name="war.dir" location="war" />
+	<property name="lib.dir" location="lib" />
+	<property name="build.dir" location="build" />
+	<property name="build.web.dir" location="build/war" />
+	<property name="metainf.dir" location="war/META-INF" />
+	<property name="dist.dir" location="dist" />
+	<property name="gwt.entrypoint.class" value="com.sharad.quizbowl.ui.client.QuizbowlUI" />
+	<property name="gwt.sdk.location" location="/usr/lib/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.r37v201109211906/gwt-2.4.0/" />
+
+	<!-- Include property values -->
+	<property file="build.properties" />
+
+	<!-- Java Compile Classpath -->
+	<path id="compile.classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<pathelement path="${java.class.path}/" />
+	</path>
+
+	<!-- GWT Compile Classpath -->
+	<path id="gwt.compile.classpath">
+		<pathelement path="${java.class.path}/" />
+		<pathelement location="${gwt.sdk.location}/gwt-user.jar" />
+		<pathelement location="${gwt.sdk.location}/gwt-dev.jar" />
+		<pathelement location="${src.dir}" />
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<!-- Delete everything this build.xml created -->
+	<target name="clean" description="Clean all build directories">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete dir="${gwt.entrypoint.class}" />
+	</target>
+
+	<!-- Prep up the tokens -->
+	<target name="init">
+		<tstamp />
+		<filter token="implVendor" value="${project.vendor}" />
+		<filter token="implVendorId" value="${project.vendor.id}" />
+		<filter token="implVersion" value="${project.version}" />
+		<filter token="projectName" value="${project.name}" />
+		<filter token="projectPackage" value="${project.package}" />
+		<filter token="specVendor" value="${project.spec.vendor}" />
+		<filter token="specVersion" value="${project.spec.version}" />
+	</target>
+
+	<!-- Create the folder structure -->
+	<target name="prepare" depends="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.web.dir}" />
+		<mkdir dir="${build.web.dir}/META-INF" />
+		<mkdir dir="${build.web.dir}/WEB-INF" />
+		<mkdir dir="${build.web.dir}/WEB-INF/classes" />
+		<mkdir dir="${build.web.dir}/WEB-INF/lib" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="static" depends="prepare">
+
+
+
+	</target>
+
+	<target name="gwt-compile" depends="static">
+		<java classpathref="gwt.compile.classpath" failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+			<arg value="com.sharad.quizbowl.ui.QuizbowlUI" />
+		</java>
+	</target>
+
+	<target name="gwt-copy" depends="gwt-compile">
+		<copy todir="${build.web.dir}">
+			<fileset dir="src/" includes="*">
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="java-compile" depends="gwt-copy" description="Compile application components">
+
+		<javac srcdir="${src.dir}" destdir="${build.web.dir}/WEB-INF/classes" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
+			<classpath refid="gwt.compile.classpath" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="gwt-copy" description="Create binary distribution">
+
+		<mkdir dir="${dist.dir}" />
+
+		<jar destfile="${dist.dir}/${project.name}.war" basedir="${war.dir}" />
+	</target>
+
+	<target name="deploy" depends="dist">
+		<scp file="${dist.dir}/${project.name}.war" todir="sharadmv:${password}@ssh.ocf.berkeley.edu:" />
+		<sshexec host="ssh.ocf.berkeley.edu" keyfile="id_rsa" username="sharadmv" command="cd public_html;rm -rf *;cd ..;mv ${project.name}.war public_html;cd public_html;unzip ${project.name}.war;rm ${project.name}.war" />
+	</target>
+</project>

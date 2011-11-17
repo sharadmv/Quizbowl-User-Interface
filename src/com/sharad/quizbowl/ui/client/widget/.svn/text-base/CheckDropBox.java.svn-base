@@ -1,0 +1,44 @@
+package com.sharad.quizbowl.ui.client.widget;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import com.google.gwt.user.client.ui.Composite;
+import com.smartgwt.client.types.MultipleAppearance;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+
+public class CheckDropBox<D> extends Composite {
+	private SelectItem box;
+
+	public CheckDropBox(List<D> list, String title) {
+		this(list, title, true);
+	}
+
+	public CheckDropBox(List<D> list, String title, boolean multi) {
+		box = new SelectItem();
+		box.setTitle(title);
+		box.setMultiple(true);
+		if (multi)
+			box.setMultipleAppearance(MultipleAppearance.PICKLIST);
+		else
+			box.setMultiple(false);
+		LinkedHashMap<String, String> yearsMap = new LinkedHashMap<String, String>();
+		for (int i = 0; i < list.size(); i++) {
+			yearsMap.put(list.get(i).toString(), list.get(i).toString());
+		}
+		box.setValueMap(yearsMap);
+		DynamicForm form = new DynamicForm();
+		form.setItems(box);
+		initWidget(form);
+	}
+
+	public List<String> getItems() {
+		return Arrays.asList(box.getValues());
+	}
+
+	public void setValue(String value) {
+		box.setValue(value);
+	}
+}
