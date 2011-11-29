@@ -98,6 +98,8 @@ public class Reader extends Composite {
 	}
 
 	public void read() {
+		idle = false;
+
 		currentTossup = tossups.get(count);
 		readArea.setText("");
 		reading = true;
