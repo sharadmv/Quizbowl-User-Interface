@@ -3,7 +3,14 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'>
 	<g:VerticalPanel>
 		<g:HorizontalPanel ui:field="labelPanel" width="100%">
-			<g:Label ui:field="tossupLabel" />
+			<g:HorizontalPanel>
+				<g:cell verticalAlignment="MIDDLE">
+					<g:Label ui:field="tossupLabel" />
+				</g:cell>
+				<g:cell verticalAlignment="MIDDLE">
+					<my:CategoryWidget ui:field="category" />
+				</g:cell>
+			</g:HorizontalPanel>
 		</g:HorizontalPanel>
 		<g:Label ui:field="tossupText" />
 		<g:Label ui:field="tossupAnswer" />

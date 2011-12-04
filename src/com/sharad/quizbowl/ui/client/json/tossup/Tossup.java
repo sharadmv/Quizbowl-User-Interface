@@ -39,6 +39,14 @@ public class Tossup extends JavaScriptObject {
 		return this.category;
 	}-*/;
 
+	public final native void setCategory(String category) /*-{
+		this.category = category;
+	}-*/;
+
+	public final native String getPkey() /*-{
+		return this.pKey;
+	}-*/;
+
 	public final native String getAccept() /*-{
 		return this.ACCEPT;
 	}-*/;

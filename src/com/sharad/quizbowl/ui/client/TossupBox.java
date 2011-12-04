@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
+import com.sharad.quizbowl.ui.client.widget.CategoryWidget;
 
 public class TossupBox extends Composite {
 	private static TossupBoxUiBinder uiBinder = GWT
@@ -18,6 +19,8 @@ public class TossupBox extends Composite {
 	public Label tossupLabel;
 	@UiField(provided = true)
 	public Label tossupText, tossupAnswer;
+	@UiField(provided = true)
+	public CategoryWidget category;
 	@UiField
 	public HorizontalPanel labelPanel;
 	private Tossup tossup;
@@ -28,9 +31,10 @@ public class TossupBox extends Composite {
 
 	public TossupBox(Tossup t) {
 		this.tossup = t;
+		category = new CategoryWidget(t);
 		tossupLabel = new Label(t.getYear() + " " + t.getTournament() + " - "
 				+ t.getRound() + " (Question #" + t.getQuestionNum() + ") "
-				+ "[" + t.getDifficulty() + "]" + " {" + t.getCategory() + "}");
+				+ "[" + t.getDifficulty() + "]");
 
 		tossupText = new HTML(t.getQuestion());
 		tossupAnswer = new HTML("ANSWER: " + t.getAnswer());

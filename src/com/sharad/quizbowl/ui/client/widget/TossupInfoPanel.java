@@ -6,6 +6,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
 
@@ -31,7 +32,10 @@ public class TossupInfoPanel extends Composite {
 	}
 
 	public void loadTossup(Tossup t) {
-		category.setContent(new HTML("<b>Category:</b> " + t.getCategory()));
+		HorizontalPanel wrapper = new HorizontalPanel();
+		wrapper.add(new HTML("<b>Category: </b>"));
+		wrapper.add(new CategoryWidget(t));
+		category.setContent(wrapper);
 		location.setHTML("<b>Tournament:</b> " + t.getYear() + " "
 				+ t.getTournament() + "<br/><b>Difficulty: </b> "
 				+ t.getDifficulty() + "<br/><b>Round: </b>" + t.getRound()

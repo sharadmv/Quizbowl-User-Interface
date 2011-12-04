@@ -201,6 +201,8 @@ public class Reader extends Composite {
 			public void onClick(ClickEvent event) {
 				if (!idle)
 					buzz();
+				else
+					getNewTossup();
 			}
 		});
 

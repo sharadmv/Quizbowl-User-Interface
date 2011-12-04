@@ -15,6 +15,9 @@
  */
 package com.sharad.quizbowl.ui.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JsArrayInteger;
 import com.google.gwt.core.client.JsArrayString;
@@ -33,6 +36,7 @@ public class QuizbowlUI implements EntryPoint {
 	public static JsArrayInteger YEARS;
 	public static JsArrayString TOURNAMENTS, DIFFICULTIES, CATEGORIES;
 	public static int NUM_QUESTIONS, NUM_USERS, NUM_SCORES;
+	public static final List<String> CATEGORIES_LIST = new ArrayList<String>();;
 
 	public void onModuleLoad() {
 		JsonpRequestBuilder dataGrabber = new JsonpRequestBuilder();
@@ -55,21 +59,30 @@ public class QuizbowlUI implements EntryPoint {
 						NUM_QUESTIONS = result.getNumQuestions();
 						NUM_USERS = result.getNumUsers();
 						NUM_SCORES = result.getNumScores();
-		final HomeWidget home = new HomeWidget(YEARS, TOURNAMENTS,
-				DIFFICULTIES, CATEGORIES);
-		RootLayoutPanel.get().add(home);
-		Timer timer = new Timer() {
+						for (int i = 0; i < CATEGORIES.length(); i++) {
+							CATEGORIES_LIST.add(CATEGORIES.get(i));
+						}
+						final HomeWidget home = new HomeWidget(YEARS,
+								TOURNAMENTS, DIFFICULTIES, CATEGORIES);
+						RootLayoutPanel.get().add(home);
 
-			@Override
-			public void run() {
-				home.search.searchBox.setFocus(true);
+						Timer timer = new Timer() {
 
-			}
+							@Override
+							public void run() {
+								home.search.searchBox.setFocus(true);
 
-		};
-		 timer.schedule(400);
+							}
 
-		 }
-		 });
+						};
+						timer.schedule(400);
+
+					}
+				});
+	}
+
+	public static String replaceInvalidCharacters(String s) {
+		return s.replaceAll("�", "\'").replaceAll("[']", "''");
+
 	}
 }

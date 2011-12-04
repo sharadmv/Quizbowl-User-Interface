@@ -9,13 +9,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArrayInteger;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -23,6 +29,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
 import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
@@ -41,6 +48,8 @@ import com.sharad.quizbowl.ui.client.widget.event.FilterEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.FilterResultEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterResultEventHandler;
+import com.sharad.quizbowl.ui.client.widget.event.LoginEvent;
+import com.sharad.quizbowl.ui.client.widget.event.LoginEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.NewTossupEvent;
 import com.sharad.quizbowl.ui.client.widget.event.NewTossupEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
@@ -55,6 +64,8 @@ public class HomeWidget extends Composite {
 	}
 
 	public LayoutPanel main;
+
+	public static String USERNAME = null;
 	private JsArrayInteger years;
 	private JsArrayString tournaments, difficulties, categories;
 	private FilterBar filterBar;
@@ -74,6 +85,11 @@ public class HomeWidget extends Composite {
 	TossupInfoPanel tossupInfoPanel;
 	@UiField
 	AnswerInfoPanel answerInfoPanel;
+	@UiField
+	Anchor login;
+	LoginBox loginBox = new LoginBox();
+	@UiField
+	static TabLayoutPanel tabPanel;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
@@ -137,7 +153,47 @@ public class HomeWidget extends Composite {
 
 		});
 		initWidget(main);
+		loginBox.addLoginEventHandler(new LoginEventHandler() {
 
+			@Override
+			public void onLogin(LoginEvent event) {
+				Window.alert(event.getUser());
+
+			}
+
+		});
+		login.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				DialogBox d = new DialogBox();
+				d.setAnimationEnabled(false);
+				d.setGlassEnabled(true);
+				d.setModal(true);
+				d.setAutoHideEnabled(true);
+				d.setTitle("Log In");
+				d.setHTML("Log In");
+				d.add(loginBox);
+				d.center();
+				d.show();
+				loginBox.setFocus();
+			}
+
+		});
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				setHash(((HTML) tabPanel.getTabWidget(event.getSelectedItem()))
+						.getText().toLowerCase());
+
+			}
+
+		});
+		if (getHash() != "") {
+			changeTab(getHash());
+		}
+		HomeWidget.addHashHandler();
 	}
 
 	public void readTossups(HashMap<String, List<String>> params) {
@@ -255,7 +311,6 @@ public class HomeWidget extends Composite {
 
 		search.getLoading().setUrl(Resources.IMAGE_LOADING);
 		search.getLoading().setVisible(true);
-
 	}
 
 	public void setSearchConfiguration(Configuration config) {
@@ -293,4 +348,34 @@ public class HomeWidget extends Composite {
 			search.setConfiguration(config);
 		}
 	}
+
+	public static void changeTab(String tab) {
+		tab = tab.replaceAll("#", "");
+
+		for (int i = 0; i < tabPanel.getWidgetCount(); i++) {
+			if (tab.equals(((HTML) tabPanel.getTabWidget(i)).getText()
+					.toLowerCase())) {
+				tabPanel.selectTab(i);
+				break;
+			}
+		}
+	}
+
+	public final static native void addHashHandler()/*-{
+		$wnd.changetab =
+          $entry(@com.sharad.quizbowl.ui.client.HomeWidget::changeTab(Ljava/lang/String;));
+		$wnd.onhashchange = function() {
+			$wnd.changetab($wnd.location.hash);
+		}
+		
+	}-*/;
+
+	public final native String getHash()/*-{
+		return $wnd.location.hash;
+	}-*/;
+
+	public final native void setHash(String hash)/*-{
+		$wnd.location.hash = hash;
+	}-*/;
+
 }

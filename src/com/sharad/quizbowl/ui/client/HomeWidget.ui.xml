@@ -10,7 +10,8 @@
 	</ui:style>
 	<g:LayoutPanel>
 		<g:layer>
-			<g:TabLayoutPanel barUnit='EM' barHeight='2.25'>
+			<g:TabLayoutPanel barUnit='EM' barHeight='2.25'
+				ui:field="tabPanel">
 				<g:tab ui:field="searchTab">
 					<g:header size='1.5'>
 						Database
@@ -39,10 +40,10 @@
 						<g:center>
 							<my:Reader ui:field="reader" />
 						</g:center>
-						<g:east size="200">
+						<g:east size="250">
 							<my:AnswerInfoPanel ui:field="answerInfoPanel" />
 						</g:east>
-						<g:west size="200">
+						<g:west size="250">
 							<my:TossupInfoPanel ui:field="tossupInfoPanel" />
 						</g:west>
 					</g:DockLayoutPanel>
@@ -55,8 +56,8 @@
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:layer>
-		<g:layer left="97%" right='0%' top='0px' height='2.25em'>
-			<g:Anchor styleName="loginText">Log In</g:Anchor>
+		<g:layer left="92%" right='0px' top='0px' height='2.25em'>
+			<g:Anchor styleName="loginText" ui:field="login">Log In</g:Anchor>
 		</g:layer>
 	</g:LayoutPanel>
 </ui:UiBinder> 
