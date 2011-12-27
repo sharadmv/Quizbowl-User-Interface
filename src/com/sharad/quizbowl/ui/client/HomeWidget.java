@@ -1,5 +1,6 @@
 package com.sharad.quizbowl.ui.client;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,8 +43,13 @@ import com.sharad.quizbowl.ui.client.widget.Reader;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch.Configuration;
 import com.sharad.quizbowl.ui.client.widget.TossupInfoPanel;
+import com.sharad.quizbowl.ui.client.widget.UserBox;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerEvent;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEvent;
 import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEventHandler;
+import com.sharad.quizbowl.ui.client.widget.event.ChangeWindowEvent;
+import com.sharad.quizbowl.ui.client.widget.event.ChangeWindowEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.FilterResultEvent;
@@ -64,7 +70,7 @@ public class HomeWidget extends Composite {
 	}
 
 	public LayoutPanel main;
-
+	public static boolean LOGGED_IN = false;
 	public static String USERNAME = null;
 	private JsArrayInteger years;
 	private JsArrayString tournaments, difficulties, categories;
@@ -86,13 +92,19 @@ public class HomeWidget extends Composite {
 	@UiField
 	AnswerInfoPanel answerInfoPanel;
 	@UiField
-	Anchor login;
-	LoginBox loginBox = new LoginBox();
+	static Anchor login;
+	CreateUserBox createBox = new CreateUserBox();
+	static LoginBox loginBox = new LoginBox();
+	static SignoutBox signoutBox = new SignoutBox();
 	@UiField
 	static TabLayoutPanel tabPanel;
+	private static DialogBox loginDialog;
+	@UiField
+	UserBox userBox;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
+		loginDialog = new DialogBox();
 		readerBox = new FilterBox(years, tournaments, difficulties, categories,
 				false, "", "Generate");
 		readerBox.addFilterEventHandler(new FilterEventHandler() {
@@ -148,7 +160,20 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onNewTossup(NewTossupEvent event) {
-				readerBox.generate();
+				readerBox.generate(); 
+			}
+
+		});
+		reader.addAnswerEventHandler(new AnswerEventHandler() {
+
+			@Override
+			public void onAnswerReceived(AnswerEvent event) {
+				if (LOGGED_IN) {
+					submitAnswer(USERNAME, event.getTossup().getPkey(), event
+							.getAnswer(), event.isCorrect(), event.getScore() 	,
+							(new Timestamp(event.getTimestamp().getTime()))
+									.toString());
+				}
 			}
 
 		});
@@ -157,26 +182,54 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onLogin(LoginEvent event) {
-				Window.alert(event.getUser());
-
+				login(event.getUser(), event.getPassword());
 			}
 
+		});
+		createBox.addLoginEventHandler(new LoginEventHandler() {
+
+			@Override
+			public void onLogin(LoginEvent event) {
+				createUser(event.getUser(), event.getPassword());
+			}
+
+		});
+		loginBox.addChangeWindowEventHandler(new ChangeWindowEventHandler() {
+			@Override
+			public void onWindowChange(ChangeWindowEvent event) {
+				loginDialog.setWidget(createBox);
+				loginDialog.setHTML("Create Account");
+			}
+		});
+		createBox.addChangeWindowEventHandler(new ChangeWindowEventHandler() {
+			@Override
+			public void onWindowChange(ChangeWindowEvent event) {
+				loginDialog.setWidget(loginBox);
+				loginDialog.setHTML("Log In");
+			}
 		});
 		login.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				DialogBox d = new DialogBox();
-				d.setAnimationEnabled(false);
-				d.setGlassEnabled(true);
-				d.setModal(true);
-				d.setAutoHideEnabled(true);
-				d.setTitle("Log In");
-				d.setHTML("Log In");
-				d.add(loginBox);
-				d.center();
-				d.show();
-				loginBox.setFocus();
+				loginDialog.setAnimationEnabled(false);
+				loginDialog.setGlassEnabled(true);
+				loginDialog.setModal(true);
+				loginDialog.setAutoHideEnabled(true);
+				loginDialog.clear();
+
+				if (!LOGGED_IN) {
+					loginDialog.setHTML("Log In");
+					loginDialog.add(loginBox);
+					loginDialog.show();
+					loginDialog.center();
+					loginBox.setFocus();
+				} else {
+					// loginDialog.setHTML("Sign out?");
+					// loginDialog.add(signoutBox);
+					userBox.setVisible(!userBox.isVisible());
+				}
+
 			}
 
 		});
@@ -193,7 +246,39 @@ public class HomeWidget extends Composite {
 		if (getHash() != "") {
 			changeTab(getHash());
 		}
-		HomeWidget.addHashHandler();
+		HomeWidget.exportStaticMethods();
+		userBox.setVisible(false);
+		userBox.signoutLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				loginDialog.setHTML("Sign out?");
+				loginDialog.add(signoutBox);
+				loginDialog.show();
+				userBox.setVisible(false);
+			}
+
+		});
+		signoutBox.yesButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				loginDialog.hide();
+				LOGGED_IN = false;
+				USERNAME = null;
+				login.setText("Log In");
+
+			}
+
+		});
+		signoutBox.noButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				loginDialog.hide();
+			}
+
+		});
 	}
 
 	public void readTossups(HashMap<String, List<String>> params) {
@@ -361,13 +446,44 @@ public class HomeWidget extends Composite {
 		}
 	}
 
-	public final static native void addHashHandler()/*-{
-		$wnd.changetab =
-          $entry(@com.sharad.quizbowl.ui.client.HomeWidget::changeTab(Ljava/lang/String;));
-		$wnd.onhashchange = function() {
-			$wnd.changetab($wnd.location.hash);
+	public static void loggedIn(boolean loggedIn, String username) {
+		LOGGED_IN = loggedIn;
+		if (LOGGED_IN) {
+			USERNAME = username;
+			login.setText(USERNAME);
+			loginDialog.hide();
 		}
-		
+
+	}
+
+	public static void created(boolean created, String username) {
+		loginDialog.setWidget(loginBox);
+		loginDialog.setHTML("Log In");
+		loginBox.userBox.setText(username);
+	}
+
+	public static native void submitAnswer(String username, String pKey,
+			String answer, boolean correct, int score, String stamp)/*-{
+		$wnd.now.submitAnswer(username, pKey, answer, correct, score, stamp);
+	}-*/;
+
+	public final static native void exportStaticMethods()/*-{
+															$wnd.changetab =
+															$entry(@com.sharad.quizbowl.ui.client.HomeWidget::changeTab(Ljava/lang/String;));
+															$wnd.onhashchange = function() {
+															$wnd.changetab($wnd.location.hash);
+															}
+															$wnd.now.loggedIn = $entry(@com.sharad.quizbowl.ui.client.HomeWidget::loggedIn(ZLjava/lang/String;));
+															$wnd.now.created = $entry(@com.sharad.quizbowl.ui.client.HomeWidget::created(ZLjava/lang/String;));
+															
+															}-*/;
+
+	public final native void login(String name, String pwd)/*-{
+		$wnd.now.login(name, $wnd.Sha1.hash(pwd));
+	}-*/;
+
+	public final native void createUser(String name, String pwd)/*-{
+		$wnd.now.createAccount(name, $wnd.Sha1.hash(pwd));
 	}-*/;
 
 	public final native String getHash()/*-{

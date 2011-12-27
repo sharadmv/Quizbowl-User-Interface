@@ -50,14 +50,28 @@
 				</g:tab>
 				<g:tab>
 					<g:header size='1.5'>
-						NowJS Fun!
+						Multiplayer Beta
 					</g:header>
-					<my:NowJSWidget />
+					<g:DockLayoutPanel ui:field="multiReaderPanel">
+
+						<g:center>
+							<my:MultiReader ui:field="multiReader" />
+						</g:center>
+						<g:east size="250">
+							<my:AnswerInfoPanel ui:field="multiAnswerInfoPanel" />
+						</g:east>
+						<g:west size="250">
+							<my:TossupInfoPanel ui:field="multiTossupInfoPanel" />
+						</g:west>
+					</g:DockLayoutPanel>
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:layer>
 		<g:layer left="92%" right='0px' top='0px' height='2.25em'>
 			<g:Anchor styleName="loginText" ui:field="login">Log In</g:Anchor>
+		</g:layer>
+		<g:layer left="90%" right='0px' top='2.25em' height='2.25em'>
+			<my:UserBox ui:field="userBox"></my:UserBox>
 		</g:layer>
 	</g:LayoutPanel>
 </ui:UiBinder> 

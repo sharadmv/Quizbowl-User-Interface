@@ -1,5 +1,6 @@
 package com.sharad.quizbowl.ui.client.widget;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -15,7 +16,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextArea;
@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerEvent;
+import com.sharad.quizbowl.ui.client.widget.event.AnswerEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEvent;
 import com.sharad.quizbowl.ui.client.widget.event.AnswerInfoEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.NewTossupEvent;
@@ -79,15 +81,20 @@ public class Reader extends Composite {
 		}
 	}
 
-	public void showAnswer(boolean correct) {
+	public void showAnswer(boolean correct, boolean time) {
+		correct = correct ? checkAnswer(answerBox.getText()) : correct;
 		waitTimer.cancel();
 		buzzed = false;
 		readArea.setFocus(true);
-		AnswerInfoEvent e = new AnswerInfoEvent(new AnswerInfo(
-				correct ? checkAnswer(answerBox.getText()) : correct,
+		if (!time) {
+			AnswerEvent ae = new AnswerEvent(currentTossup, correct,
+					answerBox.getText(), wordCount + 1, new Date());
+			fireEvent(ae);
+		}
+		AnswerInfoEvent aie = new AnswerInfoEvent(new AnswerInfo(correct,
 				currentTossup.getAnswer()));
 		answerBox.setText("");
-		fireEvent(e);
+		fireEvent(aie);
 		readArea.setText(currentTossup.getQuestion() + "\n\nANSWER: "
 				+ currentTossup.getAnswer());
 		idle = true;
@@ -111,7 +118,7 @@ public class Reader extends Composite {
 			@Override
 			public void run() {
 				canAnswer = false;
-				showAnswer(false);
+				showAnswer(false, true);
 			}
 
 		};
@@ -169,7 +176,7 @@ public class Reader extends Composite {
 			public void onKeyUp(KeyUpEvent event) {
 				if (buzzed && canAnswer) {
 					if (event.getNativeKeyCode() == 13) {
-						showAnswer(true);
+						showAnswer(true, false);
 					}
 				}
 
@@ -247,7 +254,6 @@ public class Reader extends Composite {
 			return currentTossup.getAnswer().toLowerCase()
 					.contains(text.toLowerCase());
 		}
-		// return false;
 
 	}
 
@@ -259,5 +265,9 @@ public class Reader extends Composite {
 	public HandlerRegistration addAnswerInfoEventHandler(
 			AnswerInfoEventHandler handler) {
 		return handlerManager.addHandler(AnswerInfoEvent.TYPE, handler);
+	}
+
+	public HandlerRegistration addAnswerEventHandler(AnswerEventHandler handler) {
+		return handlerManager.addHandler(AnswerEvent.TYPE, handler);
 	}
 }
