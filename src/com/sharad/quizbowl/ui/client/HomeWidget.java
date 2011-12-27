@@ -37,6 +37,7 @@ import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
 import com.sharad.quizbowl.ui.client.util.Resources;
 import com.sharad.quizbowl.ui.client.util.guava.Joiner;
 import com.sharad.quizbowl.ui.client.widget.AnswerInfoPanel;
+import com.sharad.quizbowl.ui.client.widget.Chatroom;
 import com.sharad.quizbowl.ui.client.widget.FilterBar;
 import com.sharad.quizbowl.ui.client.widget.FilterBox;
 import com.sharad.quizbowl.ui.client.widget.Reader;
@@ -93,6 +94,8 @@ public class HomeWidget extends Composite {
 	AnswerInfoPanel answerInfoPanel;
 	@UiField
 	static Anchor login;
+	@UiField
+	Chatroom chatroom;
 	CreateUserBox createBox = new CreateUserBox();
 	static LoginBox loginBox = new LoginBox();
 	static SignoutBox signoutBox = new SignoutBox();
@@ -160,7 +163,7 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onNewTossup(NewTossupEvent event) {
-				readerBox.generate(); 
+				readerBox.generate();
 			}
 
 		});
@@ -170,7 +173,7 @@ public class HomeWidget extends Composite {
 			public void onAnswerReceived(AnswerEvent event) {
 				if (LOGGED_IN) {
 					submitAnswer(USERNAME, event.getTossup().getPkey(), event
-							.getAnswer(), event.isCorrect(), event.getScore() 	,
+							.getAnswer(), event.isCorrect(), event.getScore(),
 							(new Timestamp(event.getTimestamp().getTime()))
 									.toString());
 				}
@@ -451,10 +454,15 @@ public class HomeWidget extends Composite {
 		if (LOGGED_IN) {
 			USERNAME = username;
 			login.setText(USERNAME);
+			setNowName(username);
 			loginDialog.hide();
 		}
 
 	}
+
+	public static native void setNowName(String name)/*-{
+		$wnd.now.name = name;
+	}-*/;
 
 	public static void created(boolean created, String username) {
 		loginDialog.setWidget(loginBox);

@@ -53,12 +53,15 @@
 						Multiplayer Beta
 					</g:header>
 					<g:DockLayoutPanel ui:field="multiReaderPanel">
-
+						<g:north size="60">
+							<g:Button>Start</g:Button>
+						</g:north>
 						<g:center>
 							<my:MultiReader ui:field="multiReader" />
 						</g:center>
 						<g:east size="250">
-							<my:AnswerInfoPanel ui:field="multiAnswerInfoPanel" />
+							<my:Chatroom ui:field="chatroom">
+							</my:Chatroom>
 						</g:east>
 						<g:west size="250">
 							<my:TossupInfoPanel ui:field="multiTossupInfoPanel" />
