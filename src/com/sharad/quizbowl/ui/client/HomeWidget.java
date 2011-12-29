@@ -41,6 +41,7 @@ import com.sharad.quizbowl.ui.client.widget.AnswerInfoPanel;
 import com.sharad.quizbowl.ui.client.widget.Chatroom;
 import com.sharad.quizbowl.ui.client.widget.FilterBar;
 import com.sharad.quizbowl.ui.client.widget.FilterBox;
+import com.sharad.quizbowl.ui.client.widget.MultiReader;
 import com.sharad.quizbowl.ui.client.widget.Reader;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch.Configuration;
@@ -82,7 +83,7 @@ public class HomeWidget extends Composite {
 	public FlowPanel horizontalPanel;
 	public LayoutPanel centerPanel;
 	@UiField
-	DockLayoutPanel searchPanel;
+	DockLayoutPanel searchPanel, multiReaderPanel;
 	public SimpleSearch search;
 	private TossupPanel tossupPanel;
 	@UiField(provided = true)
@@ -106,11 +107,13 @@ public class HomeWidget extends Composite {
 	@UiField
 	UserBox userBox;
 	@UiField
-	Button startButton;
+	static Button startButton;
+	static MultiReader multiReader;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
 		loginDialog = new DialogBox();
+		multiReader = new MultiReader();
 		readerBox = new FilterBox(years, tournaments, difficulties, categories,
 				false, "", "Generate");
 		readerBox.addFilterEventHandler(new FilterEventHandler() {
@@ -184,6 +187,7 @@ public class HomeWidget extends Composite {
 
 		});
 		initWidget(main);
+		multiReaderPanel.add(multiReader);
 		loginBox.addLoginEventHandler(new LoginEventHandler() {
 
 			@Override
@@ -271,8 +275,10 @@ public class HomeWidget extends Composite {
 			public void onClick(ClickEvent event) {
 				loginDialog.hide();
 				LOGGED_IN = false;
+				startButton.setEnabled(LOGGED_IN);
 				USERNAME = null;
 				login.setText("Log In");
+				logout();
 
 			}
 
@@ -285,16 +291,29 @@ public class HomeWidget extends Composite {
 			}
 
 		});
+		startButton.setEnabled(LOGGED_IN);
 		startButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Under construction!");
+				if (LOGGED_IN) {
+					startGame();
+				} else {
+					Window.alert("Please log in");
+				}
 
 			}
 
 		});
 	}
+
+	protected static native void logout()/*-{
+		$wnd.now.logout();
+	}-*/;
+
+	protected static native void startGame()/*-{
+		$wnd.now.startGame();
+	}-*/;
 
 	public void readTossups(HashMap<String, List<String>> params) {
 		String parameters = "";
@@ -463,6 +482,7 @@ public class HomeWidget extends Composite {
 
 	public static void loggedIn(boolean loggedIn, String username) {
 		LOGGED_IN = loggedIn;
+		startButton.setEnabled(LOGGED_IN);
 		if (LOGGED_IN) {
 			USERNAME = username;
 			login.setText(USERNAME);

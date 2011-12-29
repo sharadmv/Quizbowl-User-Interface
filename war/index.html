@@ -28,13 +28,48 @@
 <script type="text/javascript" src="sha1.js"></script>
 <script type="text/javascript"
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script
+<script type="text/javascript"
 	src="http://ec2-50-17-57-153.compute-1.amazonaws.com:8080/nowjs/now.js"></script>
+<!-- <script type="text/javascript" -->
+<!-- 	src="http://www.speechapi.com/static/lib/speechapi-1.3.js"></script> -->
+<!-- <script type="text/javascript" -->
+<!-- 	src="http://www.speechapi.com/static/lib/swfobject.js"></script> -->
+
 <script>
 	now.receiveMessage = function(name, message) {
 		displayText(name + ": " + message);
 	}
 </script>
+<!-- <script type="text/javascript">
+// 	function onLoaded() {
+// 		document.getElementById('flashContent').style.display = 'none'
+
+// 	}
+
+// 	//var flashvars = {speechServer : "rtmp://www.speechapi.com:1935/firstapp"};
+// 	var flashvars = {
+// 		speechServer : "http://www.speechapi.com:8000/speechcloud"
+// 	};
+// 	var params = {
+// 		allowscriptaccess : "always"
+// 	};
+// 	var attributes = {};
+// 	attributes.id = "flashContent";
+// 	swfobject.embedSWF("http://www.speechapi.com/static/lib/speechapi-1.5.swf",
+// 			"myAlternativeContent", "215", "138", "9.0.28", false, flashvars,
+// 			params, attributes);
+// 	speechapi.setup("say-demo", "password", onResult, onFinishTTS, onLoaded,
+// 			"flashContent");
+
+// 	function onResult(result) {
+// 	}
+// 	function onFinishTTS() {
+// 	}
+
+// 	function speak(val) {
+// 		speechapi.speak(val, "male");
+// 	}
+</script> -->
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push([ '_setAccount', 'UA-27408653-1' ]);
@@ -63,6 +98,8 @@
 
 	<!-- OPTIONAL: include this if you want history support -->
 	<iframe id="__gwt_historyFrame" style="width: 0; height: 0; border: 0"></iframe>
+<!-- 	<div id="myAlternativeContent"></div> -->
+<!-- 	<div id="flashContent"></div> -->
 
 </body>
 </html>

@@ -139,6 +139,7 @@ public class Reader extends Composite {
 							sb.append(delimiter).append(split[i]);
 							delimiter = " ";
 						}
+						// speak(split[wordCount]);
 						readArea.setText(sb.toString());
 						wordCount++;
 						if (reading)
@@ -155,6 +156,10 @@ public class Reader extends Composite {
 		ReadEvent event = new ReadEvent(currentTossup);
 		fireEvent(event);
 	}
+
+	protected native void speak(String string)/*-{
+		$wnd.speak(string);
+	}-*/;
 
 	private int convertSliderToSleed(float value) {
 		return (int) (2019.19 - 19.1919 * value);

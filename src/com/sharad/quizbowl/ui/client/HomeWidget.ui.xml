@@ -56,9 +56,6 @@
 						<g:north size="60">
 							<g:Button ui:field="startButton">Start</g:Button>
 						</g:north>
-						<g:center>
-							<my:MultiReader ui:field="multiReader" />
-						</g:center>
 						<g:east size="250">
 							<my:Chatroom ui:field="chatroom">
 							</my:Chatroom>
