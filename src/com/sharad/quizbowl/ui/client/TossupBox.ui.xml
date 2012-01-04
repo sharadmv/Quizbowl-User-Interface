@@ -3,14 +3,31 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'>
 	<g:VerticalPanel>
 		<g:HorizontalPanel ui:field="labelPanel" width="100%">
-			<g:HorizontalPanel>
-				<g:cell verticalAlignment="MIDDLE">
-					<g:Label ui:field="tossupLabel" />
-				</g:cell>
-				<g:cell verticalAlignment="MIDDLE">
-					<my:CategoryWidget ui:field="category" />
-				</g:cell>
-			</g:HorizontalPanel>
+			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_LEFT">
+				<g:HorizontalPanel>
+					<g:cell verticalAlignment="MIDDLE">
+						<g:Label ui:field="tossupLabel" />
+					</g:cell>
+					<g:cell verticalAlignment="MIDDLE">
+						<my:CategoryWidget ui:field="category" />
+					</g:cell>
+				</g:HorizontalPanel>
+			</g:cell>
+			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+				<g:SimplePanel ui:field="arrowUp" styleName="arrow up">
+
+				</g:SimplePanel>
+			</g:cell>
+			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+
+				<g:HTML ui:field="rating"></g:HTML>
+			</g:cell>
+			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+
+				<g:SimplePanel ui:field="arrowDown" styleName="arrow down">
+
+				</g:SimplePanel>
+			</g:cell>
 		</g:HorizontalPanel>
 		<g:Label ui:field="tossupText" />
 		<g:Label ui:field="tossupAnswer" />

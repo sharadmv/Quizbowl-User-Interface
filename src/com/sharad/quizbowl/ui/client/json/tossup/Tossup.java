@@ -51,9 +51,34 @@ public class Tossup extends JavaScriptObject {
 		return this.ACCEPT;
 	}-*/;
 
+	public final native String getRating()/*-{
+		if (typeof (this.rating) != "string") {
+			return '0';
+		} else {
+			return this.rating;
+		}
+	}-*/;
+
+	public final native int getUserRating()/*-{
+		if (this.user_rating == null) {
+			return 0;
+		} else {
+			return this.user_rating;
+		}
+	}-*/;
+
+	public final native void setRating(String rating)/*-{
+		this.rating = rating;
+	}-*/;
+
+	public final native void setUserRating(int rating)/*-{
+		this.user_rating = rating;
+	}-*/;
+
 	public final String getString() {
 		return Joiner.on(";").join(getYear(), getTournament(), getRound(),
 				getQuestionNum(), getDifficulty(), getCategory(),
 				getQuestion(), getAnswer());
 	}
+
 }

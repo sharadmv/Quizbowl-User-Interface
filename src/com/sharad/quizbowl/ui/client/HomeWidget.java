@@ -352,7 +352,9 @@ public class HomeWidget extends Composite {
 	}
 
 	public void searchTossups(HashMap<String, List<String>> params) {
-
+		if (LOGGED_IN)
+			params.put("username",
+					Arrays.asList(new String[] { HomeWidget.USERNAME }));
 		String parameters = "";
 		String delimiter = "";
 		for (String s : params.keySet()) {
