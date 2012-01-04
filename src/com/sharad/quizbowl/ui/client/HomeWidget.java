@@ -77,14 +77,17 @@ public class HomeWidget extends Composite {
 	public static String USERNAME = null;
 	private JsArrayInteger years;
 	private JsArrayString tournaments, difficulties, categories;
-	private FilterBar filterBar;
-	public Widget simpleSearch;
+	private static FilterBar filterBar;
+	public static Widget simpleSearch;
 	@UiField(provided = true)
-	public FlowPanel horizontalPanel;
-	public LayoutPanel centerPanel;
+	public static FlowPanel horizontalPanel;
+	public static LayoutPanel centerPanel;
 	@UiField
-	DockLayoutPanel searchPanel, multiReaderPanel;
-	public SimpleSearch search;
+	static
+	DockLayoutPanel searchPanel;
+	@UiField
+	DockLayoutPanel multiReaderPanel;
+	public static SimpleSearch search;
 	private TossupPanel tossupPanel;
 	@UiField(provided = true)
 	FilterBox readerBox;
@@ -403,9 +406,10 @@ public class HomeWidget extends Composite {
 						for (int i = 0; i < result.getTossups().length(); i++) {
 							list.add(result.getTossups().get(i));
 						}
-						if (tossupPanel != null)
+						if (tossupPanel != null) {
 							tossupPanel.setTossups(list, false);
-						else {
+							searchPanel.remove(tossupPanel);
+						} else {
 							tossupPanel = new TossupPanel(list);
 							tossupPanel
 									.addFilterResultEventHandler(new FilterResultEventHandler() {
@@ -420,9 +424,9 @@ public class HomeWidget extends Composite {
 										}
 
 									});
-
-							searchPanel.add(tossupPanel);
 						}
+						searchPanel.add(tossupPanel);
+
 						filterBar.reconfigure(tossupPanel.getDifficulties(),
 								tossupPanel.getTournaments(),
 								tossupPanel.getCategories());
@@ -434,7 +438,7 @@ public class HomeWidget extends Composite {
 		search.getLoading().setVisible(true);
 	}
 
-	public void setSearchConfiguration(Configuration config) {
+	public static void setSearchConfiguration(Configuration config) {
 		if (!config.equals(search.getConfiguration())) {
 			horizontalPanel.clear();
 			centerPanel.clear();
@@ -490,6 +494,7 @@ public class HomeWidget extends Composite {
 			login.setText(USERNAME);
 			setNowName(username);
 			loginDialog.hide();
+			setSearchConfiguration(Configuration.VERTICAL);
 		}
 
 	}

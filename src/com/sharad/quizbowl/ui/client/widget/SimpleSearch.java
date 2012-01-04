@@ -32,7 +32,9 @@ import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
 public class SimpleSearch extends Composite {
 	private HandlerManager handlerManager;
 	private Configuration configuration;
-	public static final List<String> POSSIBLE_PARAMETERS = Arrays.asList(new String[]{"year","tournament","difficulty","round","category","random","limit"});
+	public static final List<String> POSSIBLE_PARAMETERS = Arrays
+			.asList(new String[] { "year", "tournament", "difficulty", "round",
+					"category", "random", "limit" });
 	private static SimpleSearchUiBinder uiVertical = GWT
 			.create(SimpleSearchUiBinder.class);
 
@@ -81,6 +83,10 @@ public class SimpleSearch extends Composite {
 	public TextBox searchBox;
 	public HorizontalPanel main;
 
+	public TextBox getSearchBox() {
+		return searchBox;
+	}
+
 	public SimpleSearch(String buttonText) {
 		logo = new Image(Resources.INSTANCE.logoBig());
 		title = new Label(TITLE_STRING);
@@ -90,15 +96,15 @@ public class SimpleSearch extends Composite {
 		main.setHeight("100%");
 		handlerManager = new HandlerManager(this);
 		button.setText(buttonText);
-		
+
 		loading = new Image(Resources.INSTANCE.white());
 		loading.setHeight("16px");
 		loading.setWidth("16px");
 		// loading.setVisible(false);
 
 		initWidget(main);
-		
-//		setStylePrimaryName("simpleSearchHorizontal");
+
+		// setStylePrimaryName("simpleSearchHorizontal");
 	}
 
 	@UiHandler("button")
@@ -117,37 +123,41 @@ public class SimpleSearch extends Composite {
 		String terms = searchBox.getValue().trim();
 		RegExp term = RegExp.compile("[a-zA-Z]+:");
 		SplitResult params = term.split(terms);
-		if (params.length()>1)
+		if (params.length() > 1)
 			for (int i = 0; i < params.length(); i++) {
 				String value = params.get(i).trim();
-				if (value!="" && value.length()!=0){
-					String param = terms.substring(0,terms.indexOf(":")).trim();
-					if (POSSIBLE_PARAMETERS.contains(param)){
-						if (value.matches("\".*\".*")){	
+				if (value != "" && value.length() != 0) {
+					String param = terms.substring(0, terms.indexOf(":"))
+							.trim();
+					if (POSSIBLE_PARAMETERS.contains(param)) {
+						if (value.matches("\".*\".*")) {
 
-							value = value.substring(1,value.indexOf("\"",1));
-							terms = terms.substring(terms.indexOf("\"",terms.indexOf(value))+1);
+							value = value.substring(1, value.indexOf("\"", 1));
+							terms = terms.substring(terms.indexOf("\"",
+									terms.indexOf(value)) + 1);
 						} else {
-							if (value.indexOf(" ")!=-1){
-								
-								value = value.substring(0,value.indexOf(" "));
+							if (value.indexOf(" ") != -1) {
 
-								terms = terms.substring(terms.indexOf(" ",terms.indexOf(value)));
+								value = value.substring(0, value.indexOf(" "));
+
+								terms = terms.substring(terms.indexOf(" ",
+										terms.indexOf(value)));
 
 							} else {
-								terms = terms.substring(terms.indexOf(value)+value.length());
+								terms = terms.substring(terms.indexOf(value)
+										+ value.length());
 
 							}
-							
+
 						}
 
-						parameters.put(param,Arrays.asList(new String[]{value.trim()}));
+						parameters.put(param,
+								Arrays.asList(new String[] { value.trim() }));
 					}
 				}
 			}
 
-		parameters.put("answer",
-				Arrays.asList(new String[] { terms }));
+		parameters.put("answer", Arrays.asList(new String[] { terms }));
 		FilterEvent e = new FilterEvent(parameters);
 		fireEvent(e);
 	}
