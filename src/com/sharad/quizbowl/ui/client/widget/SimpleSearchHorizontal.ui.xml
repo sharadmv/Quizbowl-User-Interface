@@ -27,6 +27,13 @@
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:Image ui:field="loading"></g:Image>
 			</g:cell>
+
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:Anchor ui:field="advanced" styleName="searchLink">Advanced Search</g:Anchor>
+			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:Anchor ui:field="browse" styleName="searchLink">Browse</g:Anchor>
+			</g:cell>
 		</g:HorizontalPanel>
 	</g:HorizontalPanel>
 

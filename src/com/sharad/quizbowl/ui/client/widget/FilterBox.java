@@ -28,6 +28,8 @@ import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
 import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
 public class FilterBox extends Composite {
 	JsArrayInteger years;
@@ -44,7 +46,6 @@ public class FilterBox extends Composite {
 
 	Button submit;
 
-	// @UiField(provided = true)
 	Image logo;
 	@UiField(provided = true)
 	Label titleLabel;
@@ -84,7 +85,7 @@ public class FilterBox extends Composite {
 			JsArrayString difficulties, JsArrayString categories,
 			boolean includeField, String title, String buttonTitle) {
 		logo = new Image(Resources.INSTANCE.logoSmall());
-		titleLabel = new Label(SimpleSearch.TITLE_STRING);
+		titleLabel = new Label(Search.TITLE_STRING);
 		titleLabel.setStyleName("titleSmall");
 		handlerManager = new HandlerManager(this);
 		this.years = years;
@@ -117,7 +118,15 @@ public class FilterBox extends Composite {
 		});
 		field = new DynamicForm();
 		field.setFields(fieldItem);
+		fieldItem.addKeyPressHandler(new KeyPressHandler() {
 
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				if (event.getKeyName().equals("Enter"))
+					generate();
+			}
+
+		});
 		initWidget(uiBinder.createAndBindUi(this));
 		if (includeField) {
 			horizontalPanel.add(field);
@@ -158,5 +167,9 @@ public class FilterBox extends Composite {
 
 	public HandlerRegistration addFilterEventHandler(FilterEventHandler handler) {
 		return handlerManager.addHandler(FilterEvent.TYPE, handler);
+	}
+	
+	public DynamicForm getField(){
+		return field;
 	}
 }

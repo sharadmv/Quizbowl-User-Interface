@@ -24,6 +24,13 @@
 					<g:Button width="100px" ui:field="button">
 					</g:Button>
 				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_CENTER">
+					<g:HorizontalPanel styleName="searchLinkPanel">
+						<g:Anchor ui:field="advanced" styleName="searchLink">Advanced Search</g:Anchor>
+						<g:Anchor ui:field="browse" styleName="searchLink">Browse</g:Anchor>
+
+					</g:HorizontalPanel>
+				</g:cell>
 			</g:VerticalPanel>
 		</g:cell>
 	</g:HorizontalPanel>

@@ -23,7 +23,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -44,8 +43,8 @@ import com.sharad.quizbowl.ui.client.widget.FilterBar;
 import com.sharad.quizbowl.ui.client.widget.FilterBox;
 import com.sharad.quizbowl.ui.client.widget.MultiReader;
 import com.sharad.quizbowl.ui.client.widget.Reader;
-import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
-import com.sharad.quizbowl.ui.client.widget.SimpleSearch.Configuration;
+import com.sharad.quizbowl.ui.client.widget.Search;
+import com.sharad.quizbowl.ui.client.widget.Search.Configuration;
 import com.sharad.quizbowl.ui.client.widget.SortBar;
 import com.sharad.quizbowl.ui.client.widget.TossupInfoPanel;
 import com.sharad.quizbowl.ui.client.widget.UserBox;
@@ -67,6 +66,7 @@ import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.SortEvent;
 import com.sharad.quizbowl.ui.client.widget.event.SortEventHandler;
+import com.smartgwt.client.widgets.Canvas;
 
 public class HomeWidget extends Composite {
 
@@ -91,7 +91,7 @@ public class HomeWidget extends Composite {
 	static DockLayoutPanel searchPanel;
 	@UiField
 	DockLayoutPanel multiReaderPanel;
-	public static SimpleSearch search;
+	public static Search search;
 	private TossupPanel tossupPanel;
 	@UiField(provided = true)
 	FilterBox readerBox;
@@ -105,12 +105,11 @@ public class HomeWidget extends Composite {
 	static Anchor login;
 	@UiField
 	Chatroom chatroom;
-	CreateUserBox createBox = new CreateUserBox();
+	static CreateUserBox createBox = new CreateUserBox();
 	static LoginBox loginBox = new LoginBox();
 	static SignoutBox signoutBox = new SignoutBox();
 	@UiField
 	static TabLayoutPanel tabPanel;
-	private static DialogBox loginDialog;
 	@UiField
 	UserBox userBox;
 	@UiField
@@ -119,10 +118,10 @@ public class HomeWidget extends Composite {
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
-		loginDialog = new DialogBox();
 		multiReader = new MultiReader();
 		readerBox = new FilterBox(years, tournaments, difficulties, categories,
 				false, "", "Generate");
+
 		readerBox.addFilterEventHandler(new FilterEventHandler() {
 
 			@Override
@@ -140,7 +139,7 @@ public class HomeWidget extends Composite {
 		this.tournaments = tournaments;
 		this.difficulties = difficulties;
 		this.categories = categories;
-		search = new SimpleSearch();
+		search = new Search(years, tournaments, difficulties, categories);
 		search.addFilterEventHandler(new FilterEventHandler() {
 
 			@Override
@@ -156,7 +155,7 @@ public class HomeWidget extends Composite {
 		searchPanel = new DockLayoutPanel(Unit.PX);
 
 		main.add(uiBinder.createAndBindUi(this));
-		setSearchConfiguration(SimpleSearch.DEFAULT_CONFIGURATION);
+		setSearchConfiguration(Search.DEFAULT_CONFIGURATION);
 		reader.addReadEventHandler(new ReadEventHandler() {
 			@Override
 			public void onRead(ReadEvent event) {
@@ -209,37 +208,29 @@ public class HomeWidget extends Composite {
 			public void onLogin(LoginEvent event) {
 				createUser(event.getUser(), event.getPassword());
 			}
-
 		});
 		loginBox.addChangeWindowEventHandler(new ChangeWindowEventHandler() {
 			@Override
 			public void onWindowChange(ChangeWindowEvent event) {
-				loginDialog.setWidget(createBox);
-				loginDialog.setHTML("Create Account");
+				loginBox.hide();
+				createBox.show();
+				signoutBox.hide();
 			}
 		});
 		createBox.addChangeWindowEventHandler(new ChangeWindowEventHandler() {
 			@Override
 			public void onWindowChange(ChangeWindowEvent event) {
-				loginDialog.setWidget(loginBox);
-				loginDialog.setHTML("Log In");
+				loginBox.show();
+				createBox.hide();
+				signoutBox.hide();
 			}
 		});
 		login.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				loginDialog.setAnimationEnabled(false);
-				loginDialog.setGlassEnabled(true);
-				loginDialog.setModal(true);
-				loginDialog.setAutoHideEnabled(true);
-				loginDialog.clear();
-
 				if (!LOGGED_IN) {
-					loginDialog.setHTML("Log In");
-					loginDialog.add(loginBox);
-					loginDialog.show();
-					loginDialog.center();
+					loginBox.show();
 					loginBox.setFocus();
 				} else {
 					// loginDialog.setHTML("Sign out?");
@@ -269,9 +260,9 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				loginDialog.setHTML("Sign out?");
-				loginDialog.add(signoutBox);
-				loginDialog.show();
+				loginBox.hide();
+				createBox.hide();
+				signoutBox.show();
 				userBox.setVisible(false);
 			}
 
@@ -280,7 +271,7 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				loginDialog.hide();
+				signoutBox.hide();
 				LOGGED_IN = false;
 				startButton.setEnabled(LOGGED_IN);
 				USERNAME = null;
@@ -294,7 +285,7 @@ public class HomeWidget extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				loginDialog.hide();
+				signoutBox.hide();
 			}
 
 		});
@@ -314,13 +305,13 @@ public class HomeWidget extends Composite {
 		});
 		sortBar = new SortBar();
 		sortBar.setStyleName("filterBar");
-		sortBar.addSortResultEventHandler(new SortEventHandler(){
+		sortBar.addSortResultEventHandler(new SortEventHandler() {
 
 			@Override
 			public void onSort(SortEvent event) {
 				tossupPanel.sort(event.getComparator());
 			}
-			
+
 		});
 
 	}
@@ -417,7 +408,9 @@ public class HomeWidget extends Composite {
 
 									});
 						}
+						String temp = search.getSearchBox().getText();
 						setSearchConfiguration(Configuration.HORIZONTAL);
+						search.getSearchBox().setText(temp);
 						for (int i = 0; i < result.getTossups().length(); i++) {
 							list.add(result.getTossups().get(i));
 						}
@@ -511,7 +504,7 @@ public class HomeWidget extends Composite {
 			USERNAME = username;
 			login.setText(USERNAME);
 			setNowName(username);
-			loginDialog.hide();
+			loginBox.hide();
 			setSearchConfiguration(Configuration.VERTICAL);
 		}
 
@@ -522,9 +515,10 @@ public class HomeWidget extends Composite {
 	}-*/;
 
 	public static void created(boolean created, String username) {
-		loginDialog.setWidget(loginBox);
-		loginDialog.setHTML("Log In");
-		loginBox.userBox.setText(username);
+		loginBox.show();
+		createBox.hide();
+		signoutBox.hide();
+		loginBox.userBox.setValue(username);
 	}
 
 	public static native void submitAnswer(String username, String pKey,
