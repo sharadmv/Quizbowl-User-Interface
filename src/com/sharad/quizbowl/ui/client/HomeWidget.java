@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sharad.quizbowl.ui.client.json.tossup.Tossup;
 import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
@@ -45,6 +46,7 @@ import com.sharad.quizbowl.ui.client.widget.MultiReader;
 import com.sharad.quizbowl.ui.client.widget.Reader;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch;
 import com.sharad.quizbowl.ui.client.widget.SimpleSearch.Configuration;
+import com.sharad.quizbowl.ui.client.widget.SortBar;
 import com.sharad.quizbowl.ui.client.widget.TossupInfoPanel;
 import com.sharad.quizbowl.ui.client.widget.UserBox;
 import com.sharad.quizbowl.ui.client.widget.event.AnswerEvent;
@@ -63,6 +65,8 @@ import com.sharad.quizbowl.ui.client.widget.event.NewTossupEvent;
 import com.sharad.quizbowl.ui.client.widget.event.NewTossupEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEventHandler;
+import com.sharad.quizbowl.ui.client.widget.event.SortEvent;
+import com.sharad.quizbowl.ui.client.widget.event.SortEventHandler;
 
 public class HomeWidget extends Composite {
 
@@ -78,13 +82,13 @@ public class HomeWidget extends Composite {
 	private JsArrayInteger years;
 	private JsArrayString tournaments, difficulties, categories;
 	private static FilterBar filterBar;
+	private static SortBar sortBar;
 	public static Widget simpleSearch;
 	@UiField(provided = true)
 	public static FlowPanel horizontalPanel;
 	public static LayoutPanel centerPanel;
 	@UiField
-	static
-	DockLayoutPanel searchPanel;
+	static DockLayoutPanel searchPanel;
 	@UiField
 	DockLayoutPanel multiReaderPanel;
 	public static SimpleSearch search;
@@ -308,6 +312,17 @@ public class HomeWidget extends Composite {
 			}
 
 		});
+		sortBar = new SortBar();
+		sortBar.setStyleName("filterBar");
+		sortBar.addSortResultEventHandler(new SortEventHandler(){
+
+			@Override
+			public void onSort(SortEvent event) {
+				tossupPanel.sort(event.getComparator());
+			}
+			
+		});
+
 	}
 
 	protected static native void logout()/*-{
@@ -453,7 +468,10 @@ public class HomeWidget extends Composite {
 				horizontalPanel.setHeight("100%");
 				centerPanel.setVisible(false);
 				searchPanel.addNorth(horizontalPanel, 60);
-				searchPanel.addWest(filterBar, 200);
+				VerticalPanel temp = new VerticalPanel();
+				temp.add(filterBar);
+				temp.add(sortBar);
+				searchPanel.addWest(temp, 200);
 			} else if (config.equals(Configuration.VERTICAL)) {
 				RootLayoutPanel.get().setStyleName("splashStyle");
 				centerPanel.add(simpleSearch);

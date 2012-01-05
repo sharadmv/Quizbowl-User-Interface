@@ -1,6 +1,8 @@
 package com.sharad.quizbowl.ui.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -145,6 +147,11 @@ public class TossupPanel extends Composite {
 	public HandlerRegistration addFilterResultEventHandler(
 			FilterResultEventHandler handler) {
 		return handlerManager.addHandler(FilterResultEvent.TYPE, handler);
+	}
+
+	public void sort(Comparator<Tossup> c) {
+		Collections.sort(tossups,c);
+		setTossups(tossups, false);
 	}
 
 	public void filter(Set<String> difficulties, Set<String> tournaments,
