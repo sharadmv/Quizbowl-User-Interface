@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:sg='urn:import:com.smartgwt.client.widgets'>
+	<g:HorizontalPanel width="100%">
+		<g:VerticalPanel width="100%" ui:field="mainPanel">
+			<g:cell width="100%" horizontalAlignment="ALIGN_CENTER">
+				<g:TextArea width="80%" ui:field="readArea" />
+			</g:cell>
+			<g:cell width="100%" horizontalAlignment="ALIGN_CENTER">
+				<g:Button width="20%" ui:field="buzzButton">Buzz</g:Button>
+			</g:cell>
+			<g:cell width="100%" horizontalAlignment="ALIGN_CENTER">
+				<g:TextBox width="20%" ui:field="answerBox"></g:TextBox>
+			</g:cell>
+		</g:VerticalPanel>
+	</g:HorizontalPanel>
+</ui:UiBinder> 

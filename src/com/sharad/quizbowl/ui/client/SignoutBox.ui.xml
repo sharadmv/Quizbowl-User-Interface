@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:VerticalPanel>
+		<g:cell horizontalAlignment="ALIGN_CENTER">
+			<g:HTML styleName="signoutText">
+				Are you sure you want to sign out?
+			</g:HTML>
+		</g:cell>
+		<g:cell>
+			<g:HorizontalPanel width="100%">
+				<g:Button styleName="noButton" ui:field="noButton">No</g:Button>
+				<g:Button styleName="yesButton" ui:field="yesButton">Yes</g:Button>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

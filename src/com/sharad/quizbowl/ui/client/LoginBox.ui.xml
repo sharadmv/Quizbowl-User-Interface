@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'
+	xmlns:cl='urn:import:com.sharad.quizbowl.ui.client'>
+	<g:VerticalPanel width="300px">
+		<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+			<g:Grid>
+				<g:row>
+					<g:customCell verticalAlignment="ALIGN_MIDDLE"
+						horizontalAlignment="ALIGN_CENTER">
+						<g:HTML>Username:</g:HTML>
+					</g:customCell>
+					<g:customCell verticalAlignment="ALIGN_MIDDLE"
+						horizontalAlignment="ALIGN_CENTER">
+						<g:TextBox ui:field="userBox" />
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell verticalAlignment="ALIGN_MIDDLE"
+						horizontalAlignment="ALIGN_CENTER">
+						<g:HTML>Password:</g:HTML>
+					</g:customCell>
+					<g:customCell verticalAlignment="ALIGN_MIDDLE"
+						horizontalAlignment="ALIGN_CENTER">
+						<g:PasswordTextBox ui:field="passwordBox" />
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+			<g:Button width="100px" styleName="loginButton" ui:field="login">Login</g:Button>
+		</g:cell>
+		<g:cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+			<g:HorizontalPanel>
+				<g:HTML styleName="noAccountText">Don't have an account?</g:HTML>
+				<g:Anchor ui:field="createAccount" styleName="createAccountText">Create an
+					account.</g:Anchor>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 
