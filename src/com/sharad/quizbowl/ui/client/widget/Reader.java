@@ -82,7 +82,6 @@ public class Reader extends Composite {
 	}
 
 	public void showAnswer(boolean correct, boolean time) {
-		correct = correct ? checkAnswer(answerBox.getText()) : correct;
 		waitTimer.cancel();
 		buzzed = false;
 		readArea.setFocus(true);
@@ -181,7 +180,8 @@ public class Reader extends Composite {
 			public void onKeyUp(KeyUpEvent event) {
 				if (buzzed && canAnswer) {
 					if (event.getNativeKeyCode() == 13) {
-						showAnswer(true, false);
+						checkAnswer(answerBox.getText(),
+								currentTossup.getAnswer());
 					}
 				}
 
@@ -241,26 +241,10 @@ public class Reader extends Composite {
 		return handlerManager.addHandler(ReadEvent.TYPE, readEventHandler);
 	}
 
-	private boolean checkAnswer(String text) {
-		if (currentTossup.getAccept() != null) {
-			if (text == "")
-				return false;
-			String[] acceptable = currentTossup.getAccept().split(
-					ACCEPT_DELIMITER);
-			boolean correct = false;
-			for (int i = 0; i < acceptable.length; i++) {
-				if (text.equals(acceptable[i])) {
-					correct = true;
-				}
-			}
-
-			return correct;
-		} else {
-			return currentTossup.getAnswer().toLowerCase()
-					.contains(text.toLowerCase());
-		}
-
-	}
+	private native void checkAnswer(String text, String correctText)/*-{
+		var that = this;
+		$wnd.now.checkAnswer(text,correctText,$entry(function(b1){that.@com.sharad.quizbowl.ui.client.widget.Reader::showAnswer(ZZ)(b1,false)}));
+	}-*/;
 
 	public HandlerRegistration addNewTossupEventHandler(
 			NewTossupEventHandler handler) {
