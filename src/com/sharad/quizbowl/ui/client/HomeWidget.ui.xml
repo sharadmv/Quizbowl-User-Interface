@@ -65,12 +65,6 @@
 						</g:west>
 					</g:DockLayoutPanel>
 				</g:tab>
-				<g:tab>
-					<g:header size='1.5'>
-						Browser
-					</g:header>
-					<c:CellBrowser ui:field="browser" />
-				</g:tab>
 			</g:TabLayoutPanel>
 		</g:layer>
 		<g:layer left="92%" right='0px' top='0px' height='2.25em'>

@@ -117,8 +117,6 @@ public class HomeWidget extends Composite {
 	@UiField
 	static Button startButton;
 	static MultiReader multiReader;
-	@UiField(provided = true)
-	CellBrowser browser;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
@@ -158,8 +156,6 @@ public class HomeWidget extends Composite {
 		centerPanel = new LayoutPanel();
 		searchPanel = new DockLayoutPanel(Unit.PX);
 		// TODO
-		browser = new CellBrowser(new Browser.DatabaseBrowseTreeModel(
-				difficulties), null);
 		main.add(uiBinder.createAndBindUi(this));
 		setSearchConfiguration(Search.DEFAULT_CONFIGURATION);
 		reader.addReadEventHandler(new ReadEventHandler() {
