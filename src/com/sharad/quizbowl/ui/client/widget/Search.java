@@ -33,7 +33,6 @@ import com.sharad.quizbowl.ui.client.util.Resources;
 import com.sharad.quizbowl.ui.client.util.guava.Joiner;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEvent;
 import com.sharad.quizbowl.ui.client.widget.event.FilterEventHandler;
-import com.smartgwt.client.widgets.Dialog;
 import com.smartgwt.client.widgets.Window;
 
 public class Search extends Composite {
@@ -46,6 +45,7 @@ public class Search extends Composite {
 	private static SimpleSearchUiBinder uiVertical = GWT
 			.create(SimpleSearchUiBinder.class);
 	private FilterBox advancedBox;
+	private Browser browseBox;
 
 	@UiTemplate("SimpleSearch.ui.xml")
 	interface SimpleSearchUiBinder extends UiBinder<Widget, Search> {
@@ -93,7 +93,7 @@ public class Search extends Composite {
 	public HorizontalPanel main;
 	@UiField(provided = true)
 	Anchor advanced, browse;
-	Window advancedDialog;
+	Window advancedDialog, browseDialog;
 
 	public TextBox getSearchBox() {
 		return searchBox;
@@ -114,7 +114,6 @@ public class Search extends Composite {
 		main.setHeight("100%");
 		handlerManager = new HandlerManager(this);
 		button.setText(buttonText);
-
 		loading = new Image(Resources.INSTANCE.white());
 		loading.setHeight("16px");
 		loading.setWidth("16px");
@@ -142,6 +141,7 @@ public class Search extends Composite {
 			}
 
 		});
+		browseBox = new Browser(difficulties);
 		advancedDialog = new Window();
 		advancedDialog.setTitle("Advanced Search");
 		advancedDialog.addItem(advancedBox);
@@ -159,6 +159,42 @@ public class Search extends Composite {
 			}
 
 		});
+		browseDialog = new Window();
+		browseDialog.setTitle("Browse");
+		browseDialog.addItem(browseBox);
+		browseDialog.setAutoSize(true);
+		browseDialog.setCanDragReposition(true);
+		browseDialog.setCanDragResize(true);
+
+		browse.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				browseDialog.show();
+				browseDialog.centerInPage();
+			}
+
+		});
+		browseBox.addFilterEventHandler(new FilterEventHandler() {
+
+			@Override
+			public void onTossupsReceived(FilterEvent event) {
+				browseDialog.hide();
+				String query = "", delimiter = "";
+				for (Map.Entry<String, List<String>> e : event.getParameters()
+						.entrySet()) {
+					if (e.getValue().size() > 0) {
+						query += delimiter + e.getKey() + ":\""
+								+ Joiner.on("|").join(e.getValue()) + "\"";
+						delimiter = " ";
+					}
+				}
+				searchBox.setText(query);
+				doSearch();
+			}
+
+		});
+
 	}
 
 	@UiHandler("button")

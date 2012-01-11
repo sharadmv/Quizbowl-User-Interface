@@ -18,11 +18,13 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellBrowser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -38,6 +40,7 @@ import com.sharad.quizbowl.ui.client.json.tossup.TossupsPackage;
 import com.sharad.quizbowl.ui.client.util.Resources;
 import com.sharad.quizbowl.ui.client.util.guava.Joiner;
 import com.sharad.quizbowl.ui.client.widget.AnswerInfoPanel;
+import com.sharad.quizbowl.ui.client.widget.Browser;
 import com.sharad.quizbowl.ui.client.widget.Chatroom;
 import com.sharad.quizbowl.ui.client.widget.FilterBar;
 import com.sharad.quizbowl.ui.client.widget.FilterBox;
@@ -66,7 +69,6 @@ import com.sharad.quizbowl.ui.client.widget.event.ReadEvent;
 import com.sharad.quizbowl.ui.client.widget.event.ReadEventHandler;
 import com.sharad.quizbowl.ui.client.widget.event.SortEvent;
 import com.sharad.quizbowl.ui.client.widget.event.SortEventHandler;
-import com.smartgwt.client.widgets.Canvas;
 
 public class HomeWidget extends Composite {
 
@@ -115,6 +117,8 @@ public class HomeWidget extends Composite {
 	@UiField
 	static Button startButton;
 	static MultiReader multiReader;
+	@UiField(provided = true)
+	CellBrowser browser;
 
 	public HomeWidget(JsArrayInteger years, JsArrayString tournaments,
 			JsArrayString difficulties, JsArrayString categories) {
@@ -153,7 +157,9 @@ public class HomeWidget extends Composite {
 		horizontalPanel = new FlowPanel();
 		centerPanel = new LayoutPanel();
 		searchPanel = new DockLayoutPanel(Unit.PX);
-
+		// TODO
+		browser = new CellBrowser(new Browser.DatabaseBrowseTreeModel(
+				difficulties), null);
 		main.add(uiBinder.createAndBindUi(this));
 		setSearchConfiguration(Search.DEFAULT_CONFIGURATION);
 		reader.addReadEventHandler(new ReadEventHandler() {
@@ -267,6 +273,7 @@ public class HomeWidget extends Composite {
 			}
 
 		});
+
 		signoutBox.yesButton.addClickHandler(new ClickHandler() {
 
 			@Override

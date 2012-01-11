@@ -7,7 +7,6 @@
 			margin-right: 5px;
 		}
 	</ui:style>
-
 	<g:HorizontalPanel>
 
 		<g:HorizontalPanel>
@@ -36,5 +35,4 @@
 			</g:cell>
 		</g:HorizontalPanel>
 	</g:HorizontalPanel>
-
 </ui:UiBinder> 

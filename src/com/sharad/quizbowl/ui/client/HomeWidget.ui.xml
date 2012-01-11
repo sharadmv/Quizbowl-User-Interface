@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'
-	xmlns:cl='urn:import:com.sharad.quizbowl.ui.client'>
+	xmlns:cl='urn:import:com.sharad.quizbowl.ui.client' xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
 	<ui:style>
 		.databasePanel {
 			width: 100%;
@@ -64,6 +64,12 @@
 							<my:TossupInfoPanel ui:field="multiTossupInfoPanel" />
 						</g:west>
 					</g:DockLayoutPanel>
+				</g:tab>
+				<g:tab>
+					<g:header size='1.5'>
+						Browser
+					</g:header>
+					<c:CellBrowser ui:field="browser" />
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:layer>
