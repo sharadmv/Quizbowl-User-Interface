@@ -14,19 +14,8 @@
 				</g:HorizontalPanel>
 			</g:cell>
 			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
-				<g:SimplePanel ui:field="arrowUp" styleName="arrow up">
 
-				</g:SimplePanel>
-			</g:cell>
-			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
-
-				<g:HTML ui:field="rating"></g:HTML>
-			</g:cell>
-			<g:cell verticalAlignment="MIDDLE" horizontalAlignment="ALIGN_RIGHT">
-
-				<g:SimplePanel ui:field="arrowDown" styleName="arrow down">
-
-				</g:SimplePanel>
+				<my:Rater ui:field="rater" />
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:Label ui:field="tossupText" />

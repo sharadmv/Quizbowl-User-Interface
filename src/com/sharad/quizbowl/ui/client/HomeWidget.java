@@ -100,7 +100,7 @@ public class HomeWidget extends Composite {
 	@UiField
 	Reader reader;
 	@UiField
-	TossupInfoPanel tossupInfoPanel;
+	TossupInfoPanel tossupInfoPanel,multiTossupInfoPanel;
 	@UiField
 	AnswerInfoPanel answerInfoPanel;
 	@UiField
@@ -158,6 +158,14 @@ public class HomeWidget extends Composite {
 		// TODO
 		main.add(uiBinder.createAndBindUi(this));
 		setSearchConfiguration(Search.DEFAULT_CONFIGURATION);
+		multiReader.addReadEventHandler(new ReadEventHandler() {
+
+			@Override
+			public void onRead(ReadEvent event) {
+				multiTossupInfoPanel.loadTossup(event.getTossup());
+			}
+
+		});
 		reader.addReadEventHandler(new ReadEventHandler() {
 			@Override
 			public void onRead(ReadEvent event) {

@@ -1,12 +1,12 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:my='urn:import:com.sharad.quizbowl.ui.client.widget'>
 	<ui:style>
 		
 	</ui:style>
 	<g:VerticalPanel>
 		<g:HTML ui:field="location" />
 		<g:DisclosurePanel ui:field="category" />
-
+		<my:Rater ui:field="rater" />
 	</g:VerticalPanel>
 </ui:UiBinder> 

@@ -51,7 +51,7 @@ public class MultiReader extends Composite {
 	private int wordCount;
 
 	private List<Tossup> tossups;
-	private HandlerManager handlerManager;
+	private static HandlerManager handlerManager;
 	@UiField
 	public static Button buzzButton;
 	@UiField
@@ -67,51 +67,9 @@ public class MultiReader extends Composite {
 
 	}
 
-	public void setTossups(List<Tossup> tossups) {
-		this.tossups = tossups;
-		count = 0;
-		if (tossups.size() > 0) {
-			read();
-		}
-	}
-
-	public void getNewTossup() {
-		if (tossups == null || count == tossups.size()) {
-			NewTossupEvent event = new NewTossupEvent(1);
-			fireEvent(event);
-		} else {
-			read();
-		}
-	}
-
-	public void showAnswer(boolean correct, boolean time) {
-		correct = correct ? checkAnswer(answerBox.getText()) : correct;
-		readArea.setFocus(true);
-		if (!time) {
-			AnswerEvent ae = new AnswerEvent(currentTossup, correct,
-					answerBox.getText(), wordCount + 1, new Date());
-			fireEvent(ae);
-		}
-		AnswerInfoEvent aie = new AnswerInfoEvent(new AnswerInfo(correct,
-				currentTossup.getAnswer()));
-		answerBox.setText("");
-		fireEvent(aie);
-		readArea.setText(currentTossup.getQuestion() + "\n\nANSWER: "
-				+ currentTossup.getAnswer());
-		buzzButton.setVisible(true);
-		buzzButton.setText(CONTINUE_TEXT);
-		answerBox.setVisible(false);
-	}
-
-	public void read() {
-
-		currentTossup = tossups.get(count);
-		readArea.setText("");
-		wordCount = 0;
-
-		final String[] split = currentTossup.getQuestion().split(" ");
-		ReadEvent event = new ReadEvent(currentTossup);
-		fireEvent(event);
+	public void read(Tossup t) {
+		ReadEvent e = new ReadEvent(t);
+		fireEvent(e);
 	}
 
 	private int convertSliderToSleed(float value) {
@@ -127,7 +85,8 @@ public class MultiReader extends Composite {
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == 13) {
+				if (event.getNativeKeyCode() == 13
+						&& !answerBox.getText().trim().equals("")) {
 					answer(answerBox.getText().trim());
 					// showAnswer(true, false);
 				}
@@ -157,7 +116,7 @@ public class MultiReader extends Composite {
 				// getNewTossup();
 			}
 		});
-
+		export();
 	}
 
 	private static void answerQuestion() {
@@ -174,7 +133,7 @@ public class MultiReader extends Composite {
 		setBuzzed(false);
 		setCanAnswer(true);
 		currentString = "";
-        delimiter = "";
+		delimiter = "";
 	}
 
 	public static native void answer(String answer)/*-{
@@ -185,7 +144,6 @@ public class MultiReader extends Composite {
 		$wnd.now.buzz();
 	}-*/;
 
-	@Override
 	public void fireEvent(GwtEvent<?> event) {
 		handlerManager.fireEvent(event);
 	}
@@ -193,27 +151,6 @@ public class MultiReader extends Composite {
 	public HandlerRegistration addReadEventHandler(
 			ReadEventHandler readEventHandler) {
 		return handlerManager.addHandler(ReadEvent.TYPE, readEventHandler);
-	}
-
-	private boolean checkAnswer(String text) {
-		if (currentTossup.getAccept() != null) {
-			if (text == "")
-				return false;
-			String[] acceptable = currentTossup.getAccept().split(
-					ACCEPT_DELIMITER);
-			boolean correct = false;
-			for (int i = 0; i < acceptable.length; i++) {
-				if (text.equals(acceptable[i])) {
-					correct = true;
-				}
-			}
-
-			return correct;
-		} else {
-			return currentTossup.getAnswer().toLowerCase()
-					.contains(text.toLowerCase());
-		}
-
 	}
 
 	public HandlerRegistration addNewTossupEventHandler(
@@ -233,11 +170,13 @@ public class MultiReader extends Composite {
 	private static native void setNowName(String prompt)/*-{
 		$wnd.now.name = prompt;
 	}-*/;
-    private static String delimiter = "";
+
+	private static String delimiter = "";
+
 	public static void displayQuestion(String text) {
 		currentString += delimiter + text;
 		readArea.setText(currentString);
-        delimiter = " ";
+		delimiter = " ";
 	}
 
 	public static native void setBuzzed(boolean buzzed)/*-{
@@ -261,10 +200,19 @@ public class MultiReader extends Composite {
 	}-*/;
 
 	public static native void exportStaticMethods() /*-{
+		var that = this;
 		$wnd.now.updateQuestion = $entry(@com.sharad.quizbowl.ui.client.widget.MultiReader::displayQuestion(Ljava/lang/String;));
 		$wnd.now.answerQuestion = $entry(@com.sharad.quizbowl.ui.client.widget.MultiReader::answerQuestion());
 		$wnd.now.completeQuestion = $entry(@com.sharad.quizbowl.ui.client.widget.MultiReader::completeQuestion(Ljava/lang/String;));		
 		$wnd.now.unbuzz = $entry(@com.sharad.quizbowl.ui.client.widget.MultiReader::unbuzz());		
+
+	}-*/;
+
+	public native void export() /*-{
+		var that = this;
+		$wnd.now.read = $entry(function(t) {
+			that.@com.sharad.quizbowl.ui.client.widget.MultiReader::read(Lcom/sharad/quizbowl/ui/client/json/tossup/Tossup;)(t)
+		});
 
 	}-*/;
 

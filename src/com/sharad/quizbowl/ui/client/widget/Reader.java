@@ -179,7 +179,8 @@ public class Reader extends Composite {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (buzzed && canAnswer) {
-					if (event.getNativeKeyCode() == 13) {
+					if (event.getNativeKeyCode() == 13
+							&& !answerBox.getText().trim().equals("")) {
 						checkAnswer(answerBox.getText(),
 								currentTossup.getAnswer());
 					}
@@ -200,8 +201,14 @@ public class Reader extends Composite {
 						getNewTossup();
 					}
 				} else {
-					if (canAnswer && (event.getNativeKeyCode() == 32)) {
+					if (canAnswer
+							&& (!event.isControlKeyDown() && event
+									.getNativeKeyCode() == 32)) {
 						buzz();
+					} else if (canAnswer && event.isControlKeyDown()
+							&& event.getNativeKeyCode() == 32) {
+						count++;
+						getNewTossup();
 					}
 				}
 
@@ -219,6 +226,7 @@ public class Reader extends Composite {
 		});
 
 	}
+
 
 	private void buzz() {
 		canAnswer = true;
@@ -243,7 +251,13 @@ public class Reader extends Composite {
 
 	private native void checkAnswer(String text, String correctText)/*-{
 		var that = this;
-		$wnd.now.checkAnswer(text,correctText,$entry(function(b1){that.@com.sharad.quizbowl.ui.client.widget.Reader::showAnswer(ZZ)(b1,false)}));
+		$wnd.now
+				.checkAnswer(
+						text,
+						correctText,
+						$entry(function(b1) {
+							that.@com.sharad.quizbowl.ui.client.widget.Reader::showAnswer(ZZ)(b1,false)
+						}));
 	}-*/;
 
 	public HandlerRegistration addNewTossupEventHandler(

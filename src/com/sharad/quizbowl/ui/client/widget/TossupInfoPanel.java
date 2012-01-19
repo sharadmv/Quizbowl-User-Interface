@@ -19,7 +19,8 @@ public class TossupInfoPanel extends Composite {
 	@UiField(provided = true)
 	public HTML location;
 	private HTML average;
-
+	@UiField(provided = true)
+	public Rater rater;
 	interface TossupInfoPanelUiBinder extends UiBinder<Widget, TossupInfoPanel> {
 	}
 
@@ -28,10 +29,13 @@ public class TossupInfoPanel extends Composite {
 		category.setAnimationEnabled(true);
 		location = new HTML();
 		average = new HTML();
+		rater = new Rater();
+
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	public void loadTossup(Tossup t) {
+		rater.load(t);
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.add(new HTML("<b>Category: </b>"));
 		wrapper.add(new CategoryWidget(t));

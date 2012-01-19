@@ -54,11 +54,17 @@
 					</g:header>
 					<g:DockLayoutPanel ui:field="multiReaderPanel">
 						<g:north size="60">
-							<g:Button ui:field="startButton">Start</g:Button>
+							<g:HorizontalPanel width="100%" height="100%">
+								<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+									<g:Button width="500px" height="100%" ui:field="startButton">Start</g:Button>
+								</g:cell>
+							</g:HorizontalPanel>
 						</g:north>
 						<g:east size="250">
-							<my:Chatroom ui:field="chatroom">
-							</my:Chatroom>
+							<g:VerticalPanel>
+								<my:Chatroom ui:field="chatroom">
+								</my:Chatroom>
+							</g:VerticalPanel>
 						</g:east>
 						<g:west size="250">
 							<my:TossupInfoPanel ui:field="multiTossupInfoPanel" />
