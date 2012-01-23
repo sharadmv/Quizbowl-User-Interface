@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -31,6 +32,10 @@ public class Chatroom extends Composite {
 	public VerticalPanel wrapper;
 	@UiField
 	public static Label users;
+	@UiField
+	public HTML help;
+	com.smartgwt.client.widgets.Window helpWindow = new com.smartgwt.client.widgets.Window();
+
 	private static ChatroomUiBinder uiBinder = GWT
 			.create(ChatroomUiBinder.class);
 
@@ -38,6 +43,15 @@ public class Chatroom extends Composite {
 	}
 
 	public Chatroom() {
+		helpWindow.addItem(new HelpBox());
+		helpWindow.setTitle("Commands");
+		
+		// window.setAutoSize(true);
+		helpWindow.setWidth(400);
+		helpWindow.setHeight(250);
+		helpWindow.centerInPage();
+
+		helpWindow.setIsModal(true);
 		initWidget(uiBinder.createAndBindUi(this));
 		scrollPanel.setStyleName("scrollPanel");
 		chatPanel.setStyleName("chatPanel");
@@ -61,6 +75,14 @@ public class Chatroom extends Composite {
 
 		});
 		wrapper.setStyleName("chatroomWrapper");
+		help.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				helpWindow.show();
+			}
+
+		});
 	}
 
 	protected void sendMessage() {

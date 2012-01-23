@@ -13,5 +13,6 @@
 			<g:Button ui:field="sendButton">Send</g:Button>
 		</g:HorizontalPanel>
 		<g:Label ui:field="users" />
+		<g:HTML ui:field="help" styleName="helpLink"><a>Help</a></g:HTML>
 	</g:VerticalPanel>
 </ui:UiBinder> 

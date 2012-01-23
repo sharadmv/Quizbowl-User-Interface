@@ -50,7 +50,7 @@
 				</g:tab>
 				<g:tab>
 					<g:header size='1.5'>
-						Multiplayer Beta
+						Multiplayer
 					</g:header>
 					<g:DockLayoutPanel ui:field="multiReaderPanel">
 						<g:north size="60">
